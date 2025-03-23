@@ -1,0 +1,99 @@
+name: python-r demo
+
+on:
+  repository_dispatch:
+    types: [trigger-demo]
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+permissions: write-all
+
+jobs:
+  style_pkg:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create this folder to silence warning
+        run: mkdir -p ~/.nix-defexpr/channels
+
+      - name: Fetch pipeline_outputs.nar from pipeline-output branch if exists
+        run: |
+          if git ls-remote --exit-code origin pipeline-output; then
+            git fetch origin pipeline-output:pipeline-output
+            git checkout pipeline-output -- pipeline_outputs.nar
+          else
+            echo "pipeline-output branch does not exist"
+          fi
+
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: rstats-on-nix
+
+      - name: Build dev env
+        run: nix-build
+
+      - name: Run import_nix_archive if file exists
+        run: |
+          if [ -f pipeline_outputs.nar ]; then
+            nix-shell --run "Rscript -e 'rixpress::import_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
+          else
+            echo "NULL"
+          fi
+
+      - name: Generate and build pipeline
+        run: |
+          nix-shell --run "Rscript -e 'source(\"gen-pipeline.R\");rixpress::rxp_make()'"
+
+      - name: Export outputs to avoid rebuild
+        run: |
+          nix-shell --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
+
+      - name: Set git config
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Create pipeline-output branch if not exists
+        run: |
+          if ! git ls-remote --exit-code origin pipeline-output; then
+            git checkout --orphan pipeline-output
+            git rm -rf .
+            echo "Pipeline output branch" > README.md
+            git add README.md
+            git commit -m "Initial commit for pipeline-output"
+            git push origin pipeline-output
+            git checkout -
+          fi
+
+      - name: Add worktree for pipeline-output
+        run: git worktree add ../pipeline-output pipeline-output
+
+      - name: Copy pipeline_outputs.nar to worktree
+        run: cp pipeline_outputs.nar ../pipeline-output/
+
+      - name: Commit and push to pipeline-output branch
+        working-directory: ../pipeline-output
+        run: |
+          git add pipeline_outputs.nar
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Update pipeline_outputs.nar"
+            git push origin pipeline-output
+          else
+            echo "No changes to commit"
+          fi
+
+      - name: Remove worktree
+        if: always()
+        run: git worktree remove ../pipeline-output
