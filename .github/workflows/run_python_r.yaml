@@ -32,7 +32,11 @@ jobs:
         run: |
           if git ls-remote --exit-code origin rixpress-runs; then
             git fetch origin rixpress-runs:rixpress-runs
-            git checkout rixpress-runs -- pipeline_outputs.nar
+            if git ls-tree --name-only rixpress-runs | grep -q '^pipeline_outputs.nar$'; then
+              git checkout rixpress-runs -- pipeline_outputs.nar
+            else
+              echo "pipeline_outputs.nar not found in rixpress-runs branch"
+            fi
           else
             echo "rixpress-runs branch does not exist"
           fi
