@@ -1,0 +1,27 @@
+library(rix)
+
+# Python environment
+rix(
+  date = "2025-03-24",
+  r_pkgs = c("chronicler", "dplyr", "reticulate", "quarto"),
+  system_pkgs = c("pandoc", "quarto", "which"),
+  git_pkgs = list(
+    list(
+      package_name = "rix",
+      repo_url = "https://github.com/ropensci/rix/",
+      commit = "HEAD"
+    ),
+    list(
+      package_name = "rixpress",
+      repo_url = "https://github.com/b-rodrigues/rixpress",
+      commit = "999e300f4565e29fc721cf834666f8a791a33e51"
+    )
+  ),
+  py_pkgs = list(
+    py_version = "3.12",
+    py_pkgs = c("pandas", "polars", "pyarrow")
+  ),
+  ide = "none",
+  project_path = ".",
+  overwrite = TRUE
+)
