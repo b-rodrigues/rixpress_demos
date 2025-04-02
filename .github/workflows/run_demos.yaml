@@ -47,7 +47,7 @@ jobs:
 
       - name: Build dev env
         run: |
-          nix-shell -p R rPackages.rix "Rscript -e 'source(\"gen-env.R\")'"
+          nix-shell -p R rPackages.rix --run "Rscript -e 'source(\"gen-env.R\")'"
 
       - name: Run import_nix_archive if file exists
         run: |
