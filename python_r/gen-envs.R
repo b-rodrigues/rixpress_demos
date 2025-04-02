@@ -1,6 +1,5 @@
 library(rix)
 
-# Python environment
 rix(
   date = "2025-03-24",
   r_pkgs = c("chronicler", "dplyr", "reticulate", "quarto"),
@@ -14,7 +13,7 @@ rix(
     list(
       package_name = "rixpress",
       repo_url = "https://github.com/b-rodrigues/rixpress",
-      commit = "999e300f4565e29fc721cf834666f8a791a33e51"
+      commit = "HEAD"
     )
   ),
   py_pkgs = list(

@@ -1,4 +1,4 @@
-name: python-r demo
+name: python_r demo
 
 on:
   repository_dispatch:
@@ -16,6 +16,10 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    defaults:
+      run:
+        working-directory: python_r
 
     steps:
       - name: Checkout repository
@@ -42,7 +46,8 @@ jobs:
           name: rstats-on-nix
 
       - name: Build dev env
-        run: nix-build
+        run: |
+          nix-shell -p R rPackages.rix "Rscript -e 'source(\"gen-env.R\")'"
 
       - name: Run import_nix_archive if file exists
         run: |
@@ -78,13 +83,13 @@ jobs:
           fi
 
       - name: Add worktree for pipeline-output
-        run: git worktree add ../pipeline-output pipeline-output
+        run: git worktree add pipeline-output pipeline-output
 
       - name: Copy pipeline_outputs.nar to worktree
-        run: cp pipeline_outputs.nar ../pipeline-output/
+        run: cp pipeline_outputs.nar pipeline-output/
 
       - name: Commit and push to pipeline-output branch
-        working-directory: ../pipeline-output
+        working-directory: pipeline-output
         run: |
           git add pipeline_outputs.nar
           if [ -n "$(git status --porcelain)" ]; then
@@ -96,4 +101,4 @@ jobs:
 
       - name: Remove worktree
         if: always()
-        run: git worktree remove ../pipeline-output
+        run: git worktree remove pipeline-output
