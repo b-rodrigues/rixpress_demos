@@ -72,9 +72,17 @@ jobs:
           nix-shell --run "Rscript -e 'source(\"gen-pipeline.R\")'"
           cat pipeline.nix
 
+      - name: Check DAG
+        run: |
+          nix-shell --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot dag.dot"
+
       - name: Build pipeline
         run: |
           nix-shell --run "Rscript -e 'rixpress::rxp_make()'"
+
+      - name: Inspect built derivations
+        run: |
+          nix-shell --run "Rscript -e 'rixpress::rxp_inspect()'"
 
       - name: Export outputs to avoid rebuild
         run: |
