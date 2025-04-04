@@ -84,6 +84,10 @@ jobs:
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
 
+      - name: Put generated HTML in workdir
+        run: |
+          nix-shell --quiet --run "Rscript -e 'path_to_html <- Filter(function(x) grepl(\"html\", x), rixpress::rxp_read(\"page\")); file.rename(path_to_html, \".\")'"
+
       - name: Export outputs to avoid rebuild
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
