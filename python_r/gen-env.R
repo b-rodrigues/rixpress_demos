@@ -2,7 +2,7 @@ library(rix)
 
 rix(
   date = "2025-03-24",
-  r_pkgs = c("chronicler", "dplyr", "reticulate", "quarto"),
+  r_pkgs = c("chronicler", "dplyr", "igraph", "reticulate", "quarto"),
   git_pkgs = list(
     list(
       package_name = "rix",

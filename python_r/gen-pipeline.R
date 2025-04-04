@@ -1,4 +1,5 @@
 library(rixpress)
+library(igraph)
 
 d0 <- rxp_py_file(
   name = mtcars_pl,
