@@ -64,3 +64,7 @@ dag_obj <- set_vertex_attr(dag_obj, "label", value = V(dag_obj)$name)
 dag_obj <- delete_vertex_attr(dag_obj, "name")
 
 igraph::write_graph(dag_obj, file = "dag.dot", format = "dot")
+
+path_to_html <- Filter(\(x) grepl("html", x), x = rxp_read("page"))
+
+file.rename(path_to_html, ".")
