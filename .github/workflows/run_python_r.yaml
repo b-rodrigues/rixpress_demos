@@ -69,7 +69,7 @@ jobs:
 
       - name: Generate and check out pipeline
         run: |
-          nix-shell --run "Rscript -e 'source(\"gen-pipeline.R\")'"
+          nix-shell --quiet --run "Rscript -e 'source(\"gen-pipeline.R\")'"
           cat pipeline.nix
 
       - name: Check DAG
@@ -78,15 +78,15 @@ jobs:
 
       - name: Build pipeline
         run: |
-          nix-shell --run "Rscript -e 'rixpress::rxp_make()'"
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_make()'"
 
       - name: Inspect built derivations
         run: |
-          nix-shell --run "Rscript -e 'rixpress::rxp_inspect()'"
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
 
       - name: Export outputs to avoid rebuild
         run: |
-          nix-shell --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
+          nix-shell --quiet --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
 
       - name: Set git config
         run: |
