@@ -73,3 +73,6 @@ object.
      a folder containing images), pass the path of the HTML file to
      `browseURL()` to open it in your web browser. (A feature to streamline this
      process is planned for future updates.)
+
+Take a look at the `.github/workflows/run_python_r.yaml` file to see how this
+pipeline is build and executed on Github Actions.
