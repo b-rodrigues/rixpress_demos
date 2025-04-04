@@ -1,7 +1,7 @@
 library(rix)
 
 rix(
-  date = "2025-03-24",
+  date = "2025-03-31",
   r_pkgs = c("chronicler", "dplyr", "igraph", "reticulate", "quarto"),
   git_pkgs = list(
     list(
