@@ -92,6 +92,11 @@ jobs:
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
 
+      - name: Set git config
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
       - name: Copy output `page` to docs/python_r
         run: |
           cp -r pipeline-output/* ../docs/python_r
@@ -109,11 +114,6 @@ jobs:
             git commit -m "updated output of python_r pipeline"
             git push origin master
           fi
-
-      - name: Set git config
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
 
       - name: Create rixpress-runs branch if not exists
         run: |

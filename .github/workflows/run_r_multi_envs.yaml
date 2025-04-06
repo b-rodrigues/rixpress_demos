@@ -11,7 +11,7 @@ on:
 permissions: write-all
 
 jobs:
-  python-r:
+  r-multi-envs:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
