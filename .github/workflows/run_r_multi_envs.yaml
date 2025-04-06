@@ -92,14 +92,21 @@ jobs:
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
 
-      - name: Publish HTML Summary
-        run: |
-          cat page.html >> $GITHUB_STEP_SUMMARY
-
       - name: Set git config
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+
+      - name: Copy output `page` to docs/r_multi_envs
+        run: |
+          cp -r pipeline-output/* ../../docs/
+          mv ../../docs/page.html ../../docs.index.html
+
+      - name: Push docs
+        run: |
+          git add docs/
+          git commit -m "updated outout of r_multi_envs pipeline"
+          git push origin master
 
       - name: Create rixpress-runs branch if not exists
         run: |
