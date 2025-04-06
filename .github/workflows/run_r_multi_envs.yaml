@@ -99,8 +99,8 @@ jobs:
 
       - name: Copy output `page` to docs/r_multi_envs
         run: |
-          cp -r pipeline-output/* ../docs/
-          mv ../docs/page.html ../docs.index.html
+          cp -r pipeline-output/* ../docs/r_multi_envs
+          mv ../docs/r_multi_envs/page.html ../r_multi_envs/docs.index.html
 
       - name: Push docs
         run: |
