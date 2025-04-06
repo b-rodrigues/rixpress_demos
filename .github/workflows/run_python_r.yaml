@@ -95,6 +95,7 @@ jobs:
       - name: Copy output `page` to docs/python_r
         run: |
           cp -r pipeline-output/* ../docs/python_r
+          rm ../docs/python_r/index.html
           mv ../docs/python_r/page.html ../docs/python_r/index.html
 
       - name: Push docs

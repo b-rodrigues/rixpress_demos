@@ -100,6 +100,7 @@ jobs:
       - name: Copy output `page` to docs/r_multi_envs
         run: |
           cp -r pipeline-output/* ../docs/r_multi_envs
+          rm ../docs/r_multi_envs/index.html
           mv ../docs/r_multi_envs/page.html ../docs/r_multi_envs/index.html
 
       - name: Push docs
