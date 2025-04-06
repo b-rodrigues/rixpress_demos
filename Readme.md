@@ -13,4 +13,4 @@ full workflows to ensure everything behaves as expected. This approach provides
 a practical way to catch regressions or breaking changes.
 
 The outputs of the pipelines are published and can be viewed
-[here](./docs/index.html).
+[here](https://b-rodrigues.github.io/rixpress_demos/).
