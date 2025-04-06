@@ -92,9 +92,21 @@ jobs:
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
 
-      - name: Publish HTML Summary
+      - name: Copy output `page` to docs/r_multi_envs
         run: |
-          cat page.html >> $GITHUB_STEP_SUMMARY
+          cp -r pipeline-output/* ../docs/r_multi_envs
+          mv ../docs/python_r/page.html ../docs/python_r/index.html
+
+      - name: Push docs
+        run: |
+          cd ..
+          git add docs/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "updated output of python_r pipeline"
+            git push origin master
+          fi
 
       - name: Set git config
         run: |

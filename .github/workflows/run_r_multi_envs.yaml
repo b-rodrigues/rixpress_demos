@@ -106,8 +106,12 @@ jobs:
         run: |
           cd ..
           git add docs/
-          git commit -m "updated outout of r_multi_envs pipeline"
-          git push origin master
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "updated output of r_multi_envs pipeline"
+            git push origin master
+          fi
 
       - name: Create rixpress-runs branch if not exists
         run: |
