@@ -86,13 +86,13 @@ jobs:
 
       - name: Put generated HTML in workdir
         run: |
-          nix-shell --quiet --run "Rscript -e 'path_to_html <- Filter(function(x) grepl(\"html\", x), rixpress::rxp_read(\"page\")); file.copy(path_to_html, \"./page.html\")'"
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_copy(\"page\")'"
 
       - name: Export outputs to avoid rebuild
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::export_nix_archive(archive_file = \"pipeline_outputs.nar\")'"
 
-      - name: Copy output `page` to docs/r_multi_envs
+      - name: Copy output `page` to docs/python_r
         run: |
           cp -r pipeline-output/* ../docs/r_multi_envs
           mv ../docs/python_r/page.html ../docs/python_r/index.html
@@ -100,6 +100,7 @@ jobs:
       - name: Push docs
         run: |
           cd ..
+          git pull --rebase origin master
           git add docs/
           if git diff --cached --quiet; then
             echo "No changes to commit."
