@@ -46,6 +46,3 @@ dag_obj <- delete_vertex_attr(dag_obj, "name")
 
 igraph::write_graph(dag_obj, file = "dag.dot", format = "dot")
 
-# Move pipeline output to docs/
-
-rxp_copy("page")
