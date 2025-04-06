@@ -1,7 +1,9 @@
-## Multi-language pipeline example
+## Multi-language pipeline example with additional Quarto args
 
-This example demonstrates how Python and R can work together to build a Quarto
-document that compiles to an HTML file.
+This is the same example as in the `pyton_r` folder, but here the markdown
+document gets compiled to PDF using Typst. This example demonstrates how Python
+and R can work together to build a Quarto document that compiles to a PDF
+file using Typst.
 
 - **`gen-env.R`**: An R script that uses the `{rix}` package to generate a Nix
   expression. This expression defines an environment with both R and Python,
@@ -69,11 +71,11 @@ object.
      ```r
      rxp_read("page")
      ```
-     Since this derivation produces several files (including the HTML output and
-     a folder containing images), pass the path of the HTML file to
-     `browseURL()` to open it in your web browser. You can also use
-     `rxp_copy("page")` to copy the contents of the folder to your working
-     directory, to make it more easily accessible.
+     Since this derivation produces several files (including the PDF output and
+     a folder containing images), pass the path of the PDF file to `browseURL()`
+     to open it in your web browser. You can also use `rxp_copy("page")` to copy
+     the contents of the folder to your working directory, to make it more
+     easily accessible.
 
 Take a look at the `.github/workflows/run_python_r.yaml` file to see how this
 pipeline is build and executed on Github Actions.
