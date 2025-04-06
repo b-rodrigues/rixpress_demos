@@ -104,6 +104,7 @@ jobs:
 
       - name: Push docs
         run: |
+          cd ..
           git add docs/
           git commit -m "updated outout of r_multi_envs pipeline"
           git push origin master
