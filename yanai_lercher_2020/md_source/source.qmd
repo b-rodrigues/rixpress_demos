@@ -1,0 +1,150 @@
+---
+title: "rixpress translation of Yanai and Lercher 2020"
+format:
+  html:
+    embed-resources: true
+    toc: true
+---
+
+This pipeline is similar to the example found in `python_r` in that it mixes
+both R and Python code and ultimately outputs an HTML document.
+
+This is inspired by the code found in [this blog
+post](https://ivelasq.rbind.io/blog/reticulate-data-recreation/). Thank you to
+[Isabella Velásquez](https://fosstodon.org/deck/@ivelasq3/114293176424941566)
+for the suggestion!
+
+You can find the original paper [here](https://www.biorxiv.org/content/10.1101/2020.07.30.228916v1).
+
+Source code is
+[here](https://github.com/b-rodrigues/rixpress_demos/tree/master/yanai_lercher_2020).
+The pipeline definition is in `gen-pipeline.R` and the environment definition in
+`gen-env.R`.
+
+Let's start by looking at the original image:
+
+![Original](gorilla/gorilla/gorilla-waving-cartoon-black-white-outline-clipart-914.jpg)
+
+Get the coordinates using Python by defining this derivation:
+
+```{r}
+#| eval: false
+d0 <- rxp_py_file(
+  name = gorilla_pixels,
+  path = 'md_source/gorilla/gorilla-waving-cartoon-black-white-outline-clipart-914.jpg',
+  read_function = "read_image",
+  additional_file = "functions/functions.py"
+)
+
+```
+
+This is the of the `read_image` function:
+
+```{python}
+#| eval: false
+import numpy as np
+from PIL import Image
+
+def read_image(x):
+    im = Image.open(x)
+    pixels = np.asarray(im)
+    return pixels
+```
+
+We then define a threshold and get the remaining coordinates:
+
+```{python}
+#| eval: false
+d1 <- rxp_py(
+  name = threshold_level,
+  py_expr = "50"
+)
+
+d2 <- rxp_py(
+  name = py_coords,
+  py_expr = "numpy.column_stack(numpy.where(pixels < threshold_level))"
+)
+```
+
+We can then convert `py_coords` to an R object:
+
+```{r}
+#| eval: false
+d3 <- rxp_py2r(
+  name = raw_coords,
+  expr = py_coords
+)
+```
+
+Then we clean them:
+
+```{r}
+#| eval: false
+d4 <- rxp_r(
+  name = coords,
+  expr = clean_coords(raw_coords),
+  additional_files = "functions.R"
+)
+```
+
+This is the R function used to clean the coordinates:
+
+```{r}
+#| eval: false
+clean_coords <- function(coords) {
+  as.data.frame(py$coords) %>%
+    dplyr::sample_n(1768) %>%
+    dplyr::mutate(bmi = V2 * 17 + 15, steps = 15000 - V1 * 15000 / max(V1)) %>%
+    dplyr::mutate(
+      randvar = rnorm(n(), mean = 0, sd = 10),
+      randi = steps * (1 + randvar),
+      gender = dplyr::case_when(randi < median(steps) ~ "Female", TRUE ~ "Male")
+    )
+}
+```
+
+Finally, we can look at the gender distribution:
+
+```{r}
+rixpress::rxp_read("gender_dist")
+```
+
+and some graphs:
+
+```{r}
+rixpress::rxp_read("plot1")
+```
+
+
+```{r}
+rixpress::rxp_read("plot2")
+```
+
+
+The code to compute the gender distribution and graphs:
+
+
+
+```{r}
+#| eval: false
+gender_distribution <- function(coords) {
+  dplyr::count(coords, gender)
+}
+
+make_plot1 <- function(coords) {
+  coords %>%
+    ggplot(aes(x = bmi, y = steps)) +
+    geom_point() +
+    theme_void() +
+    xlim(0, 15000)
+}
+
+make_plot2 <- function(coords) {
+  coords %>%
+    ggplot(aes(x = bmi, y = steps, color = gender)) +
+    geom_point() +
+    theme_void() +
+    xlim(0, 15000)
+}
+
+```

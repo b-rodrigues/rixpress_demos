@@ -1,0 +1,80 @@
+/* Created by igraph 0.10.13-126-g31c4e6ffc */
+digraph {
+  0 [
+    shape=star
+    label=root
+  ];
+  1 [
+    shape=triangle
+    label=gorilla_pixels
+  ];
+  2 [
+    shape=triangle
+    label=threshold_level
+  ];
+  3 [
+    shape=triangle
+    label=py_coords
+  ];
+  4 [
+    shape=triangle
+    label=raw_coords
+  ];
+  5 [
+    shape=circle
+    label=gender_dist
+  ];
+  6 [
+    shape=circle
+    label=plot1
+  ];
+  7 [
+    shape=circle
+    label=plot2
+  ];
+  8 [
+    shape=circle
+    label=coords
+  ];
+  9 [
+    shape=square
+    label=page
+  ];
+
+  0 -> 1 [
+    type=rxp_py
+  ];
+  0 -> 2 [
+    type=rxp_py
+  ];
+  1 -> 3 [
+    type=rxp_py
+  ];
+  2 -> 3 [
+    type=rxp_py
+  ];
+  3 -> 4 [
+    type=rxp_py2r
+  ];
+  4 -> 8 [
+    type=rxp_r
+  ];
+  4 -> 5 [
+    type=rxp_r
+  ];
+  4 -> 6 [
+    type=rxp_r
+  ];
+  4 -> 7 [
+    type=rxp_r
+  ];
+  5 -> 9 [
+    type=rxp_quarto
+  ];
+  6 -> 9 [
+    type=rxp_quarto
+  ];
+  7 -> 9 [
+    type=rxp_quarto
+  ];
+}
