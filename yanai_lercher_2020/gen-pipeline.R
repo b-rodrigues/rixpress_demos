@@ -48,7 +48,7 @@ d7 <- rxp_r(
 )
 
 doc <- rxp_quarto(
-  name = page,
+  name = doc,
   qmd_file = "md_source/source.qmd",
   additional_files = c("md_source/gorilla")
 )
