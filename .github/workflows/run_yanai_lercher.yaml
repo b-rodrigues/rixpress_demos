@@ -99,8 +99,9 @@ jobs:
 
       - name: Copy output `page` to docs/yanai_lercher
         run: |
-          cp -r pipeline-output/* ../docs/yanai_lercher
           rm ../docs/yanai_lercher/index.html
+          cp -r pipeline-output/* ../docs/yanai_lercher
+          ls -la
           mv ../docs/yanai_lercher/page.html ../docs/yanai_lercher/index.html
 
       - name: Push docs
