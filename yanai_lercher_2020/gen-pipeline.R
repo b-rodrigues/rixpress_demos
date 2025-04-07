@@ -31,19 +31,19 @@ d4 <- rxp_r(
 
 d5 <- rxp_r(
   name = gender_dist,
-  expr = gender_distribution(raw_coords),
+  expr = gender_distribution(coords),
   additional_files = "functions.R"
 )
 
 d6 <- rxp_r(
   name = plot1,
-  expr = make_plot1(raw_coords),
+  expr = make_plot1(coords),
   additional_files = "functions.R"
 )
 
 d7 <- rxp_r(
   name = plot2,
-  expr = make_plot2(raw_coords),
+  expr = make_plot2(coords),
   additional_files = "functions.R"
 )
 
@@ -56,6 +56,8 @@ doc <- rxp_quarto(
 rxp_list <- list(d0, d1, d2, d3, d4, d5, d6, d7, doc)
 
 rixpress(rxp_list, project_path = ".")
+
+adjust_imports("import pillow", "from PIL import Image")
 
 # Plot DAG for CI
 dag_obj <- plot_dag(return_igraph = TRUE)

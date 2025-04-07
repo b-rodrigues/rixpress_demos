@@ -1,5 +1,5 @@
 clean_coords <- function(coords) {
-  as.data.frame(py$coords) %>%
+  as.data.frame(coords) %>%
     dplyr::sample_n(1768) %>%
     dplyr::mutate(bmi = V2 * 17 + 15, steps = 15000 - V1 * 15000 / max(V1)) %>%
     dplyr::mutate(

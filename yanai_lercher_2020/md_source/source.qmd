@@ -23,7 +23,7 @@ The pipeline definition is in `gen-pipeline.R` and the environment definition in
 
 Let's start by looking at the original image:
 
-![Original](gorilla/gorilla/gorilla-waving-cartoon-black-white-outline-clipart-914.jpg)
+![Original](gorilla/gorilla-waving-cartoon-black-white-outline-clipart-914.jpg)
 
 Get the coordinates using Python by defining this derivation:
 
