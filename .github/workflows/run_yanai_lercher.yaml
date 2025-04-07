@@ -86,7 +86,7 @@ jobs:
 
       - name: Put generated HTML in workdir
         run: |
-          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_copy(\"page\")'"
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_copy(\"doc\")'"
 
       - name: Export outputs to avoid rebuild
         run: |
@@ -101,8 +101,7 @@ jobs:
         run: |
           rm ../docs/yanai_lercher/index.html
           cp -r pipeline-output/* ../docs/yanai_lercher
-          ls -la ../docs/yanai_lercher
-          mv ../docs/yanai_lercher/page.html ../docs/yanai_lercher/index.html
+          mv ../docs/yanai_lercher/source.html ../docs/yanai_lercher/index.html
 
       - name: Push docs
         run: |
