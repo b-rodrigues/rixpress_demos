@@ -1,5 +1,31 @@
 ## Multi-language pipeline example
 
+The `matches` object has to be computed outside of the `rixpress` pipeline.
+This is because building happens in a completely isolated sandbox, and
+`obistools::match_taxa()` queries the `marinespecies.org` API. Because
+the build sandboxes don’t have internet access, this fails. This could be 
+perceived as annoying, but, for reproducibility purposes, it is a good practice
+to save data obtained from APIs instead of relying on its future availability,
+which could not be guaranteed.
+
+So we save `matches` using the following line:
+
+```
+matches <- obistools::match_taxa(species, ask = FALSE)
+```
+
+and then save `matches`, which is a data frame object, in the `data/` folder.
+Once this is done, the `matches.csv` data can be read into the pipeline using:
+
+```
+d4 <- rxp_r_file(
+  name = matches,
+  path = 'data/matches.csv',
+  read_function = "read.csv"
+)
+```
+
+
 This example demonstrates how Python and R can work together to build a Quarto
 document that compiles to an HTML file.
 

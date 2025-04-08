@@ -1,0 +1,8 @@
+"scientificName","scientificNameID","match_type","acceptedNameUsageID"
+"Caretta caretta","urn:lsid:marinespecies.org:taxname:137205","exact","137205"
+"Chelonia mydas","urn:lsid:marinespecies.org:taxname:137206","exact","137206"
+"Dermochelys coriacea","urn:lsid:marinespecies.org:taxname:137209","exact","137209"
+"Eretmochelys imbricata","urn:lsid:marinespecies.org:taxname:137207","exact","137207"
+"Lepidochelys kempii","urn:lsid:marinespecies.org:taxname:137208","exact","137208"
+"Lepidochelys olivacea","urn:lsid:marinespecies.org:taxname:220293","exact","220293"
+"Natator depressus","urn:lsid:marinespecies.org:taxname:344093","near_2","344093"

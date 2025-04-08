@@ -41,19 +41,17 @@ cp ${./_rixpress/default_libraries.R} libraries.R
   # Define all derivations
     gdf = makePyDerivation {
     name = "gdf";
-    src = ./data/oceans.shp;
-    buildInputs = defaultBuildInputs;
+     src = defaultPkgs.lib.fileset.toSource {
+      root = ./.;
+      fileset = defaultPkgs.lib.fileset.unions [ ./data/ ];
+    };
+   buildInputs = defaultBuildInputs;
     configurePhase = defaultConfigurePhase;
     buildPhase = ''
-      cp $src input_file
-python -c "
+      python -c "
 exec(open('libraries.py').read())
-file_path = 'input_file'
-data = eval('lambda x: geopandas.read_file(x)')(file_path)
-with open('gdf.pickle', 'wb') as f:
-    pickle.dump(data, f)
-"
-
+exec('gdf = geopandas.read_file(\'data/oceans.shp\', driver=\'ESRI Shapefile\')')
+with open('gdf.pickle', 'wb') as f: pickle.dump(globals()['gdf'], f)"
     '';
   };
 
@@ -97,14 +95,15 @@ with open('atlantic.pickle', 'wb') as f: pickle.dump(globals()['atlantic'], f)"
 
   matches = makeRDerivation {
     name = "matches";
+    src = ./data/matches.csv;
     buildInputs = defaultBuildInputs;
     configurePhase = defaultConfigurePhase;
     buildPhase = ''
-      Rscript -e "
-        source('libraries.R')
-        species <- readRDS('${species}/species.rds')
-        matches <- obistools::match_taxa(species, ask = FALSE)
-        saveRDS(matches, 'matches.rds')"
+      cp $src input_file
+Rscript -e "
+source('libraries.R')
+data <- do.call('read.csv', list('input_file'))
+saveRDS(data, 'matches.rds')"
     '';
   };
 

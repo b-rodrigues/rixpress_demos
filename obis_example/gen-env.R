@@ -22,7 +22,7 @@ rix(
   ),
   py_pkgs = list(
     py_version = "3.12",
-    py_pkgs = c("geopandas", "pandas", "folium")
+    py_pkgs = c("geopandas", "fiona", "pandas", "folium")
   ),
   ide = "none",
   project_path = ".",

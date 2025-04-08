@@ -18,7 +18,8 @@
 #  > commit = "HEAD")),
 #  > py_pkgs = list(py_version = "3.12",
 #  > py_pkgs = c("geopandas",
-#  >      "pandas",
+#  >      "fiona",
+#  > "pandas",
 #  > "folium")),
 #  > ide = "none",
 #  > project_path = ".",
@@ -106,6 +107,7 @@ let
     inherit (pkgs.python312Packages) 
       pip
       ipykernel
+      fiona
       folium
       geopandas
       pandas;

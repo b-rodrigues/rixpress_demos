@@ -1,10 +1,10 @@
 library(rixpress)
 library(igraph)
 
-d0 <- rxp_py_file(
+d0 <- rxp_py(
   name = gdf,
-  path = 'data/oceans.shp',
-  read_function = "lambda x: geopandas.read_file(x)"
+  py_expr = "geopandas.read_file('data/oceans.shp', driver='ESRI Shapefile')",
+  additional_files = c("data/oceans.shp", "data/oceans.shx", "data/oceans.dbf", "data/oceans.prj")
 )
 
 d1 <- rxp_py(
@@ -23,10 +23,12 @@ d3 <- rxp_r(
   additional_files = "functions.R"
 )
 
-d4 <- rxp_r(
+d4 <- rxp_r_file(
   name = matches,
-  expr = obistools::match_taxa(species, ask = FALSE)
+  path = 'data/matches.csv',
+  read_function = "read.csv"
 )
+
 
 #doc <- rxp_quarto(
 #  name = page,
