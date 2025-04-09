@@ -1,12 +1,16 @@
-## Multi-language pipeline example
+## OBIS database exploration
 
-The `matches` object has to be computed outside of the `rixpress` pipeline.
-This is because building happens in a completely isolated sandbox, and
-`obistools::match_taxa()` queries the `marinespecies.org` API. Because
-the build sandboxes don’t have internet access, this fails. This could be 
-perceived as annoying, but, for reproducibility purposes, it is a good practice
-to save data obtained from APIs instead of relying on its future availability,
-which could not be guaranteed.
+This example is adapted from the
+[following notebook](https://ioos.github.io/ioos_code_lab/content/code_gallery/data_access_notebooks/2018-02-20-obis.html).
+
+Adapting this notebook to a `rixpress` pipeline requires consideration on two
+levels. First, the notebook uses the `obistools` package to create a `matches`
+object via `match_taxa()`, which queries the `marinespecies.org` API. This call
+must be made outside the `rixpress` pipeline, as builds run in isolated
+sandboxes without internet access. While this may seem inconvenient, it aligns
+with good reproducibility practices; API-derived data should be saved rather than
+fetched dynamically, since future availability of the API isn’t guaranteed
+(nor the stability of results).
 
 So we save `matches` using the following line:
 
@@ -14,7 +18,7 @@ So we save `matches` using the following line:
 matches <- obistools::match_taxa(species, ask = FALSE)
 ```
 
-and then save `matches`, which is a data frame object, in the `data/` folder.
+and then write `matches`, which is a data frame object, in the `data/` folder.
 Once this is done, the `matches.csv` data can be read into the pipeline using:
 
 ```
@@ -25,27 +29,34 @@ d4 <- rxp_r_file(
 )
 ```
 
+The second consideration involves how the Python `geopandas` package reads
+Shapefiles. A Shapefile isn't a single file—`oceans.shp` must be accompanied by
+other files like `.shx` and `.prj` in the same directory. For
+`geopandas.read_file("path/to/oceans.shp")` to work, all of these files need to
+be accessible. To ensure this, the `copy_data_folder` argument in
+`rxp_py_file()` must be set to `TRUE`:
 
-This example demonstrates how Python and R can work together to build a Quarto
-document that compiles to an HTML file.
+```
+d0 <- rxp_py_file(
+  name = gdf,
+  path = 'data/oceans.shp',
+  read_function = "lambda x: geopandas.read_file(x, driver='ESRI Shapefile')",
+  copy_data_folder = TRUE
+)
+
+```
+
+This copies all the contents of the `data/` folder into the Nix sandbox, making
+it thus possible to read in `oceans.shp` using `geopandas.read_file()`.
+
+Otherwise, this is a classic example of Python and R working together to generate
+an analysis as an HTML file using Quarto.
 
 - **`gen-env.R`**: An R script that uses the `{rix}` package to generate a Nix
   expression. This expression defines an environment with both R and Python,
   along with the necessary packages, including Quarto.
 - **`gen-pipeline.R`**: An R script that sets up a multi-language pipeline by
-  defining derivations. For example:
-
-```r
-d1 <- rxp_py(
-  # reticulate doesn't support polars DataFrames yet, so we first convert
-  # to a pandas DataFrame
-  name = mtcars_pl_am,
-  py_expr = "mtcars_pl.filter(polars.col('am') == 1).to_pandas()"
-)
-```
-
-Here, `d1` is a derivation that runs Python code to generate the `mtcars_pl_am`
-object.
+  defining derivations.
 
 ### How to Run the Pipeline
 
@@ -87,9 +98,9 @@ object.
      ```r
      rxp_inspect()
      ```
-   - To read the output of the derivation that generates `mtcars_pl_am`, use:
+   - To read the output of the derivation that generates `atlantic`, use:
      ```r
-     rxp_read("mtcars_pl_am")
+     rxp_read("atlantic")
      ```
    - To view the compiled report, run:
      ```r
@@ -101,5 +112,5 @@ object.
      `rxp_copy("page")` to copy the contents of the folder to your working
      directory, to make it more easily accessible.
 
-Take a look at the `.github/workflows/run_python_r.yaml` file to see how this
+Take a look at the `.github/workflows/run_obis.yaml` file to see how this
 pipeline is build and executed on Github Actions.
