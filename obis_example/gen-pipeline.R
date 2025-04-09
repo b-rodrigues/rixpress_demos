@@ -1,10 +1,11 @@
 library(rixpress)
 library(igraph)
 
-d0 <- rxp_py(
+d0 <- rxp_py_file(
   name = gdf,
-  py_expr = "geopandas.read_file('data/oceans.shp', driver='ESRI Shapefile')",
-  additional_files = c("data/oceans.shp", "data/oceans.shx", "data/oceans.dbf", "data/oceans.prj")
+  path = 'data/oceans.shp',
+  read_function = "lambda x: geopandas.read_file(x, driver='ESRI Shapefile')",
+  copy_data_folder = TRUE
 )
 
 d1 <- rxp_py(
@@ -13,17 +14,22 @@ d1 <- rxp_py(
 )
 
 d2 <- rxp_py(
-  name = atlantic,
+  name = atlantic_py,
   py_expr = "sa.wkt"
 )
 
-d3 <- rxp_r(
+d3 <- rxp_py2r(
+  name = atlantic,
+  expr = atlantic_py
+)
+
+d4 <- rxp_r(
   name = species,
   expr = set_species(),
   additional_files = "functions.R"
 )
 
-d4 <- rxp_r_file(
+d5 <- rxp_r_file(
   name = matches,
   path = 'data/matches.csv',
   read_function = "read.csv"
