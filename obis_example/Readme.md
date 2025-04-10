@@ -115,15 +115,6 @@ an analysis as an HTML file using Quarto.
      ```r
      rxp_read("atlantic")
      ```
-   - To view the compiled report, run:
-     ```r
-     rxp_read("page")
-     ```
-     Since this derivation produces several files (including the HTML output and
-     a folder containing images), pass the path of the HTML file to
-     `browseURL()` to open it in your web browser. You can also use
-     `rxp_copy("page")` to copy the contents of the folder to your working
-     directory, to make it more easily accessible.
 
 Take a look at the `.github/workflows/run_obis.yaml` file to see how this
 pipeline is build and executed on Github Actions.
