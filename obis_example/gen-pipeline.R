@@ -6,7 +6,8 @@ list(
     name = gdf,
     path = 'data/oceans.shp',
     read_function = "lambda x: geopandas.read_file(x, driver='ESRI Shapefile')",
-    copy_data_folder = TRUE
+    copy_data_folder = TRUE # to read in oceans.shp, other files, included in data/ need to
+                            # accessible to the build sandbox
   ),
   
   rxp_py(
