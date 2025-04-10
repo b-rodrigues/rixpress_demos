@@ -21,3 +21,6 @@ nix-shell
 
 start R by typing `R`, you can now run the pipeline by running `source("gen-pipeline")`.
 You can take a look at the data by typing `rixpress::rxp_read("mtcars_parts")`.
+
+Take a look at the `.github/workflows/run_many_inputs_files.yaml` file to see how this
+pipeline is build and executed on Github Actions.
