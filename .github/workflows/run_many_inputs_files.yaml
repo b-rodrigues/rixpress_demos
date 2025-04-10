@@ -1,4 +1,4 @@
-name: many_inputs_files demo
+name: many_inputs_example demo
 
 on:
   repository_dispatch:
@@ -19,7 +19,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./many_inputs_files
+        working-directory: ./many_inputs_example
 
     steps:
       - name: Checkout repository
