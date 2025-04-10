@@ -1,7 +1,20 @@
 ## OBIS database exploration
 
+If you use shapefiles or data from APIs, we recommend working through this
+example.
+
 This example is adapted from the
 [following notebook](https://ioos.github.io/ioos_code_lab/content/code_gallery/data_access_notebooks/2018-02-20-obis.html).
+
+Unfortunately, the OBIS api seemed to have changed since this notebook was first
+put together, so we cannot replicate the entirety of the results:
+
+```
+> robis::occurrence(species, atlantic)
+Error: The OBIS API was not able to process your request. If the problem persists, please contact helpdesk@obis.org.
+```
+
+However, we can still learn a lot by reproducing what we can.
 
 Adapting this notebook to a `rixpress` pipeline requires consideration on two
 levels. First, the notebook uses the `obistools` package to create a `matches`
