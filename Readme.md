@@ -17,6 +17,7 @@ The outputs of the pipelines are published and can be viewed
 
 ## Examples list
 
+- `basic_r`: simplest example;
 - `many_inputs_example`: shows how to read many data files under a single folder in one go;
 - `obis_example`: Python-R pipeline that illustrates how to analyze a shapefile, and data from an API;
 - `python_r`: simple Python-R pipeline;
