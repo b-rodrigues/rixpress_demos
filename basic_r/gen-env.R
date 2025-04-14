@@ -3,7 +3,7 @@ library(rix)
 # Define execution environment
 rix(
   date = "2025-04-11",
-  r_pkgs = "dplyr",
+  r_pkgs = c("dplyr", "igraph"),
   git_pkgs = list(
     package_name = "rixpress",
     repo_url = "https://github.com/b-rodrigues/rixpress",
