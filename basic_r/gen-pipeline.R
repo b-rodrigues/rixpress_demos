@@ -1,4 +1,5 @@
 library(rixpress)
+library(igraph)
 
 list(
   rxp_r_file(
