@@ -17,4 +17,4 @@ list(
     expr = dplyr::select(filtered_mtcars, mpg)
   )
 ) |>
-  rixpress(project_path = ".")
+  rixpress(project_path = ".", build = FALSE)
