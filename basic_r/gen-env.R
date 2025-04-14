@@ -9,7 +9,7 @@ rix(
     repo_url = "https://github.com/b-rodrigues/rixpress",
     commit = "HEAD"
   ),
-  ide = "rstudio",
+  ide = "none",
   project_path = ".",
   overwrite = TRUE
 )
