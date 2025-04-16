@@ -74,7 +74,7 @@ jobs:
 
       - name: Check DAG
         run: |
-          nix-shell --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot dag.dot"
+          nix-shell --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot _rixpress/dag.dot"
 
       - name: Build pipeline
         run: |

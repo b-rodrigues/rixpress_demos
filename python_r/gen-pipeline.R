@@ -57,11 +57,4 @@ list(
 
 
 # Plot DAG for CI
-dag_obj <- plot_dag(return_igraph = TRUE)
-
-dag_obj <- set_vertex_attr(dag_obj, "label", value = V(dag_obj)$name)
-
-# Step 2: Delete the "name" attribute
-dag_obj <- delete_vertex_attr(dag_obj, "name")
-
-igraph::write_graph(dag_obj, file = "dag.dot", format = "dot")
+dag_for_ci()
