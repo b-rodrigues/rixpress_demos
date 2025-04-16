@@ -28,20 +28,6 @@ jobs:
       - name: Create this folder to silence warning
         run: mkdir -p ~/.nix-defexpr/channels
 
-      - name: Fetch pipeline_outputs.nar from rixpress-runs branch if exists
-        working-directory: ${{ github.workspace }}
-        run: |
-          if git ls-remote --exit-code origin rixpress-runs; then
-            git fetch origin rixpress-runs:rixpress-runs
-            if git ls-tree --name-only rixpress-runs | grep -q '^pipeline_outputs.nar$'; then
-              git checkout rixpress-runs -- pipeline_outputs.nar
-            else
-              echo "pipeline_outputs.nar not found in rixpress-runs branch"
-            fi
-          else
-            echo "rixpress-runs branch does not exist"
-          fi
-
       - name: Install Nix
         uses: cachix/install-nix-action@v31
         with:
@@ -58,14 +44,6 @@ jobs:
 
       - name: Checkout default.nix
         run: cat default.nix
-
-      - name: Run import_nix_archive if file exists
-        run: |
-          if [ -f ../pipeline_outputs.nar ]; then
-            nix-shell --quiet --run "Rscript -e 'rixpress::import_nix_archive(archive_file = \"../pipeline_outputs.nar\")'"
-          else
-            echo "pipeline_outputs.nar not found"
-          fi
 
       - name: Generate and check out pipeline
         run: |
