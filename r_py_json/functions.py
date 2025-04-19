@@ -1,3 +1,3 @@
-def serialize_to_json(obj, path):
+def serialize_to_json(pl_df, path):
     with open(path, 'w') as f:
-        f.write(obj.to_json())
+        f.write(pl_df.write_json())
