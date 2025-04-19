@@ -61,3 +61,7 @@ jobs:
       - name: Inspect built derivations
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
+
+      - name: Show mtcars_mpg
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_read(\"mtcars_mpg\")'"
