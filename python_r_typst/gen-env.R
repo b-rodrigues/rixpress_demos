@@ -16,7 +16,7 @@ rix(
       commit = "HEAD"
     )
   ),
-  py_pkgs = list(
+  py_conf = list(
     py_version = "3.12",
     py_pkgs = c("pandas", "polars", "pyarrow")
   ),
