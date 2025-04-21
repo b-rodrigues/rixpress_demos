@@ -18,10 +18,12 @@ The outputs of the pipelines are published and can be viewed
 ## Examples list
 
 - `basic_r`: simplest example;
+- `r_qs`: simplest example, busing `{qs}` for serialisation instead of `saveRDS/readRDS`;
 - `many_inputs_example`: shows how to read many data files under a single folder in one go;
 - `obis_example`: Python-R pipeline that illustrates how to analyze a shapefile, and data from an API;
 - `python_r`: simple Python-R pipeline;
 - `python_r_typst`: simple Python-R pipeline that compiles to a Typst document;
+- `r_py_json`: Python-R pipeline with direct transfer of data from Python to R using json;
 - `r_multi_envs`: R pipeline that illustrates how different environments can be used for different derivations
 - `yanai_lercher_2020`: Python-R pipeline, an adaptation of the code of the paper 'Selective attention in hypothesis-driven data analysis'
 
