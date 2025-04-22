@@ -56,4 +56,8 @@ jobs:
 
       - name: Check out the data
         run: |
-          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_read(\"mtcars_parts\")'"
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_read(\"mtcars_r\")'"
+
+      - name: Check out the data
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_read(\"head_mtcars\")'"

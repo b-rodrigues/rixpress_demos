@@ -2,8 +2,8 @@ library(rix)
 
 
 rix(
-  date = "2025-03-31",
-  r_pkgs = c("quarto", "readr"),
+  date = "2025-04-14",
+  r_pkgs = c("quarto", "readr", "reticulate"),
   git_pkgs = list(
     list(
       package_name = "rix",
@@ -15,6 +15,10 @@ rix(
       repo_url = "https://github.com/b-rodrigues/rixpress",
       commit = "HEAD"
     )
+  ),
+  py_conf = list(
+    py_version = "3.12",
+    py_pkgs = "polars"
   ),
   ide = "none",
   project_path = ".",
