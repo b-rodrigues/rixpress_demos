@@ -19,14 +19,8 @@
       "type": ["rxp_py"]
     },
     {
-      "deriv_name": ["indices"],
-      "depends": ["X"],
-      "unserialize_function": ["pickle.load"],
-      "type": ["rxp_py"]
-    },
-    {
       "deriv_name": ["splits"],
-      "depends": ["X", "Y", "indices"],
+      "depends": ["X", "Y"],
       "unserialize_function": ["pickle.load"],
       "type": ["rxp_py"]
     },
@@ -55,12 +49,6 @@
       "type": ["rxp_py"]
     },
     {
-      "deriv_name": ["test_indices"],
-      "depends": ["splits"],
-      "unserialize_function": ["pickle.load"],
-      "type": ["rxp_py"]
-    },
-    {
       "deriv_name": ["model"],
       "depends": ["X_train", "y_train"],
       "unserialize_function": ["pickle.load"],
@@ -73,8 +61,8 @@
       "type": ["rxp_py"]
     },
     {
-      "deriv_name": ["combined_dataset_np"],
-      "depends": ["dataset_np", "test_indices", "y_pred"],
+      "deriv_name": ["combined_data_np"],
+      "depends": ["y_test", "y_pred"],
       "unserialize_function": ["pickle.load"],
       "type": ["rxp_py"]
     },

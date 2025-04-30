@@ -22,17 +22,10 @@ list(
     py_expr = "dataset_np[:,8]"
   ),
 
-  # Create an array of indices for the original dataset
-  rxp_py(
-    name = indices,
-    # Ensure arange is available
-    py_expr = "arange(X.shape[0])"
-  ),
-
-  # Split X, Y, and the indices array
+  # Split X and Y
   rxp_py(
     name = splits,
-    py_expr = "train_test_split(X, Y, indices, test_size=0.33, random_state=7)"
+    py_expr = "train_test_split(X, Y, test_size=0.33, random_state=7)"
   ),
 
   # Extract X_train (index 0)
@@ -59,12 +52,6 @@ list(
     py_expr = "splits[3]"
   ),
 
-  # Extract test_indices (index 5) - THIS IS WHAT WE NEED
-  rxp_py(
-    name = test_indices,
-    py_expr = "splits[5]"
-  ),
-
   # Train the XGBoost classifier
   rxp_py(
     name = model,
@@ -77,12 +64,12 @@ list(
     py_expr = "model.predict(X_test)"
   ),
 
-  # Combine original data with predictions using your NumPy function
+  # Combine y_test and y_pred into a simple NumPy array
   rxp_py(
-    name = combined_dataset_np, # Output is a NumPy array
-    # Call your specific function
-    py_expr = "combine_dataset_with_predictions(dataset_np, y_pred, test_indices)",
-    # Specify the file containing the function
+    name = combined_data_np, # Output is a NumPy array
+    # Combine y_test and y_pred side-by-side
+    py_expr = "column_stack((y_test, y_pred))",
+    # Specify the file potentially containing the write_to_csv function
     additional_files = "functions.py",
     # Use your specific NumPy CSV writing function for serialization
     serialize_function = "write_to_csv"
@@ -95,8 +82,17 @@ list(
   )
 ) |>
   rixpress(build = FALSE)
-  
-adjust_import("import numpy", "from numpy import arange, array, column_stack, loadtxt, nan, savetxt")
+
+adjust_import(
+  "import numpy",
+  "from numpy import array, column_stack, loadtxt, nan, savetxt"
+)
+
 adjust_import("import xgboost", "from xgboost import XGBClassifier")
-adjust_import("import sklearn", "from sklearn.model_selection import train_test_split")
+
+adjust_import(
+  "import sklearn",
+  "from sklearn.model_selection import train_test_split"
+)
+
 add_import("from sklearn.metrics import accuracy_score", "default.nix")

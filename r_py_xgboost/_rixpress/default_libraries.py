@@ -1,4 +1,4 @@
-from numpy import arange, array, column_stack, loadtxt, nan, savetxt
+from numpy import array, column_stack, loadtxt, nan, savetxt
 import pickle
 from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier

@@ -71,20 +71,6 @@ with open('Y', 'wb') as f: pickle.dump(globals()['Y'], f)
     '';
   };
 
-  indices = makePyDerivation {
-    name = "indices";
-    buildInputs = defaultBuildInputs;
-    configurePhase = defaultConfigurePhase;
-    buildPhase = ''
-      python -c "
-exec(open('libraries.py').read())
-with open('${X}/X', 'rb') as f: X = pickle.load(f)
-exec('indices = arange(X.shape[0])')
-with open('indices', 'wb') as f: pickle.dump(globals()['indices'], f)
-"
-    '';
-  };
-
   splits = makePyDerivation {
     name = "splits";
     buildInputs = defaultBuildInputs;
@@ -94,8 +80,7 @@ with open('indices', 'wb') as f: pickle.dump(globals()['indices'], f)
 exec(open('libraries.py').read())
 with open('${X}/X', 'rb') as f: X = pickle.load(f)
 with open('${Y}/Y', 'rb') as f: Y = pickle.load(f)
-with open('${indices}/indices', 'rb') as f: indices = pickle.load(f)
-exec('splits = train_test_split(X, Y, indices, test_size=0.33, random_state=7)')
+exec('splits = train_test_split(X, Y, test_size=0.33, random_state=7)')
 with open('splits', 'wb') as f: pickle.dump(globals()['splits'], f)
 "
     '';
@@ -157,20 +142,6 @@ with open('y_test', 'wb') as f: pickle.dump(globals()['y_test'], f)
     '';
   };
 
-  test_indices = makePyDerivation {
-    name = "test_indices";
-    buildInputs = defaultBuildInputs;
-    configurePhase = defaultConfigurePhase;
-    buildPhase = ''
-      python -c "
-exec(open('libraries.py').read())
-with open('${splits}/splits', 'rb') as f: splits = pickle.load(f)
-exec('test_indices = splits[5]')
-with open('test_indices', 'wb') as f: pickle.dump(globals()['test_indices'], f)
-"
-    '';
-  };
-
   model = makePyDerivation {
     name = "model";
     buildInputs = defaultBuildInputs;
@@ -201,18 +172,17 @@ with open('y_pred', 'wb') as f: pickle.dump(globals()['y_pred'], f)
     '';
   };
 
-  combined_dataset_np = makePyDerivation {
-    name = "combined_dataset_np";
+  combined_data_np = makePyDerivation {
+    name = "combined_data_np";
     buildInputs = defaultBuildInputs;
     configurePhase = defaultConfigurePhase;
     buildPhase = ''
       python -c "
 exec(open('libraries.py').read())
-with open('${dataset_np}/dataset_np', 'rb') as f: dataset_np = pickle.load(f)
-with open('${test_indices}/test_indices', 'rb') as f: test_indices = pickle.load(f)
+with open('${y_test}/y_test', 'rb') as f: y_test = pickle.load(f)
 with open('${y_pred}/y_pred', 'rb') as f: y_pred = pickle.load(f)
-exec('combined_dataset_np = combine_dataset_with_predictions(dataset_np, y_pred, test_indices)')
-write_to_csv(globals()['combined_dataset_np'], 'combined_dataset_np')
+exec('combined_data_np = column_stack((y_test, y_pred))')
+write_to_csv(globals()['combined_data_np'], 'combined_data_np')
 "
     '';
   };
@@ -235,11 +205,11 @@ with open('accuracy', 'wb') as f: pickle.dump(globals()['accuracy'], f)
   # Generic default target that builds all derivations
   allDerivations = defaultPkgs.symlinkJoin {
     name = "all-derivations";
-    paths = with builtins; attrValues { inherit dataset_np X Y indices splits X_train X_test y_train y_test test_indices model y_pred combined_dataset_np accuracy; };
+    paths = with builtins; attrValues { inherit dataset_np X Y splits X_train X_test y_train y_test model y_pred combined_data_np accuracy; };
   };
 
 in
 {
-  inherit dataset_np X Y indices splits X_train X_test y_train y_test test_indices model y_pred combined_dataset_np accuracy;
+  inherit dataset_np X Y splits X_train X_test y_train y_test model y_pred combined_data_np accuracy;
   default = allDerivations;
 }
