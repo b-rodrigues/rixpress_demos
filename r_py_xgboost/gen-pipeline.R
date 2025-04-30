@@ -1,28 +1,22 @@
 library(rixpress)
 
-# Define the rixpress pipeline
 list(
-  # Load the dataset from the CSV file into a NumPy array
   rxp_py_file(
     name = dataset_np, # Keep name indicating NumPy array
     path = "data/pima-indians-diabetes.csv",
-    # Ensure loadtxt is available (either via functions.py import or default.nix)
     read_function = "lambda x: loadtxt(x, delimiter=',')"
   ),
 
-  # Extract features (columns 0 to 7)
   rxp_py(
     name = X,
     py_expr = "dataset_np[:,0:8]"
   ),
 
-  # Extract target variable (column 8)
   rxp_py(
     name = Y,
     py_expr = "dataset_np[:,8]"
   ),
 
-  # Split X and Y
   rxp_py(
     name = splits,
     py_expr = "train_test_split(X, Y, test_size=0.33, random_state=7)"
@@ -52,18 +46,18 @@ list(
     py_expr = "splits[3]"
   ),
 
-  # Train the XGBoost classifier
   rxp_py(
     name = model,
     py_expr = "XGBClassifier(use_label_encoder=False, eval_metric='logloss').fit(X_train, y_train)"
   ),
 
-  # Make predictions on the test data
   rxp_py(
     name = y_pred,
     py_expr = "model.predict(X_test)"
   ),
 
+  # Combine the y_test and y_pred vectors to export to csv
+  # This will be done used in an R environment by yardstick::conf_mat
   rxp_py(
     name = combined_df,
     py_expr = "DataFrame({'truth': y_test, 'estimate': y_pred})"
@@ -95,7 +89,6 @@ list(
     )
   ),
 
-  # Calculate the accuracy score
   rxp_py(
     name = accuracy,
     py_expr = "accuracy_score(y_test, y_pred)"
