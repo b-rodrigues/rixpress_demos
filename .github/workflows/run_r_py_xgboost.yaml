@@ -64,4 +64,4 @@ jobs:
 
       - name: Show mtcars_mpg
         run: |
-          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_read(\"mtcars_mpg\")'"
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_read(\"confusion_matrix\")'"
