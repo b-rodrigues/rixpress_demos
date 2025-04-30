@@ -61,10 +61,28 @@
       "type": ["rxp_py"]
     },
     {
-      "deriv_name": ["combined_data_np"],
+      "deriv_name": ["combined_df"],
       "depends": ["y_test", "y_pred"],
       "unserialize_function": ["pickle.load"],
       "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["combined_csv"],
+      "depends": ["combined_df"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["combined_factor"],
+      "depends": ["combined_csv"],
+      "unserialize_function": ["\"read.csv\""],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["confusion_matrix"],
+      "depends": ["combined_factor"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
     },
     {
       "deriv_name": ["accuracy"],

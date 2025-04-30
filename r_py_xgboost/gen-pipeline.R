@@ -64,15 +64,35 @@ list(
     py_expr = "model.predict(X_test)"
   ),
 
-  # Combine y_test and y_pred into a simple NumPy array
   rxp_py(
-    name = combined_data_np, # Output is a NumPy array
-    # Combine y_test and y_pred side-by-side
-    py_expr = "column_stack((y_test, y_pred))",
-    # Specify the file potentially containing the write_to_csv function
+    name = combined_df,
+    py_expr = "DataFrame({'truth': y_test, 'estimate': y_pred})"
+  ),
+
+  rxp_py(
+    name = combined_csv,
+    py_expr = "combined_df",
     additional_files = "functions.py",
-    # Use your specific NumPy CSV writing function for serialization
     serialize_function = "write_to_csv"
+  ),
+
+  # yardstick::conf_mat needs factor variables
+  rxp_r(
+    combined_factor,
+    expr = mutate(
+      combined_csv,
+      across(.cols = everything(), .fns = factor)
+    ),
+    unserialize_function = "read.csv"
+  ),
+
+  rxp_r(
+    name = confusion_matrix,
+    expr = conf_mat(
+      combined_factor,
+      truth,
+      estimate
+    )
   ),
 
   # Calculate the accuracy score
@@ -81,11 +101,12 @@ list(
     py_expr = "accuracy_score(y_test, y_pred)"
   )
 ) |>
-  rixpress(build = FALSE)
+  rixpress(build = FALSE) # Need to set to FALSE because we
+# adjust imports first
 
 adjust_import(
   "import numpy",
-  "from numpy import array, column_stack, loadtxt, nan, savetxt"
+  "from numpy import array, loadtxt"
 )
 
 adjust_import("import xgboost", "from xgboost import XGBClassifier")
@@ -96,3 +117,7 @@ adjust_import(
 )
 
 add_import("from sklearn.metrics import accuracy_score", "default.nix")
+add_import("from pandas import DataFrame", "default.nix")
+
+# Now we can build
+rxp_make()

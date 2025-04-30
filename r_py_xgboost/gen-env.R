@@ -2,7 +2,12 @@ library(rix)
 
 rix(
   date = "2025-04-29",
-  r_pkgs = c("ggplot2", "reticulate", "yardstick"),
+  r_pkgs = c(
+    "dplyr",
+    "ggplot2",
+    "reticulate",
+    "yardstick"
+  ),
   git_pkgs = list(
     list(
       package_name = "rix",
@@ -17,7 +22,12 @@ rix(
   ),
   py_conf = list(
     py_version = "3.13",
-    py_pkgs = c("numpy", "xgboost", "scikit-learn")
+    py_pkgs = c(
+      "numpy",
+      "pandas",
+      "scikit-learn",
+      "xgboost"
+    )
   ),
   ide = "none",
   project_path = ".",

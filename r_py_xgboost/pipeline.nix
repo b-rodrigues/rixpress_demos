@@ -9,6 +9,16 @@ let
     mkdir -p $out
   '';
   
+  # Function to create R derivations
+  makeRDerivation = { name, buildInputs, configurePhase, buildPhase, src ? null }:
+    defaultPkgs.stdenv.mkDerivation {
+      inherit name src;
+      dontUnpack = true;
+      inherit buildInputs configurePhase buildPhase;
+      installPhase = ''
+        cp ${name} $out/
+      '';
+    };
   # Function to create Python derivations
   makePyDerivation = { name, buildInputs, configurePhase, buildPhase, src ? null }:
     let
@@ -172,8 +182,8 @@ with open('y_pred', 'wb') as f: pickle.dump(globals()['y_pred'], f)
     '';
   };
 
-  combined_data_np = makePyDerivation {
-    name = "combined_data_np";
+  combined_df = makePyDerivation {
+    name = "combined_df";
     buildInputs = defaultBuildInputs;
     configurePhase = defaultConfigurePhase;
     buildPhase = ''
@@ -181,9 +191,49 @@ with open('y_pred', 'wb') as f: pickle.dump(globals()['y_pred'], f)
 exec(open('libraries.py').read())
 with open('${y_test}/y_test', 'rb') as f: y_test = pickle.load(f)
 with open('${y_pred}/y_pred', 'rb') as f: y_pred = pickle.load(f)
-exec('combined_data_np = column_stack((y_test, y_pred))')
-write_to_csv(globals()['combined_data_np'], 'combined_data_np')
+exec('combined_df = DataFrame({\'truth\': y_test, \'estimate\': y_pred})')
+with open('combined_df', 'wb') as f: pickle.dump(globals()['combined_df'], f)
 "
+    '';
+  };
+
+  combined_csv = makePyDerivation {
+    name = "combined_csv";
+    buildInputs = defaultBuildInputs;
+    configurePhase = defaultConfigurePhase;
+    buildPhase = ''
+      python -c "
+exec(open('libraries.py').read())
+with open('${combined_df}/combined_df', 'rb') as f: combined_df = pickle.load(f)
+exec('combined_csv = combined_df')
+write_to_csv(globals()['combined_csv'], 'combined_csv')
+"
+    '';
+  };
+
+  combined_factor = makeRDerivation {
+    name = "combined_factor";
+    buildInputs = defaultBuildInputs;
+    configurePhase = defaultConfigurePhase;
+    buildPhase = ''
+      Rscript -e "
+        source('libraries.R')
+        combined_csv <- "read.csv"('${combined_csv}/combined_csv')
+        combined_factor <- mutate(combined_csv, across(.cols = everything(), .fns = factor))
+        saveRDS(combined_factor, 'combined_factor')"
+    '';
+  };
+
+  confusion_matrix = makeRDerivation {
+    name = "confusion_matrix";
+    buildInputs = defaultBuildInputs;
+    configurePhase = defaultConfigurePhase;
+    buildPhase = ''
+      Rscript -e "
+        source('libraries.R')
+        combined_factor <- readRDS('${combined_factor}/combined_factor')
+        confusion_matrix <- conf_mat(combined_factor, truth, estimate)
+        saveRDS(confusion_matrix, 'confusion_matrix')"
     '';
   };
 
@@ -205,11 +255,11 @@ with open('accuracy', 'wb') as f: pickle.dump(globals()['accuracy'], f)
   # Generic default target that builds all derivations
   allDerivations = defaultPkgs.symlinkJoin {
     name = "all-derivations";
-    paths = with builtins; attrValues { inherit dataset_np X Y splits X_train X_test y_train y_test model y_pred combined_data_np accuracy; };
+    paths = with builtins; attrValues { inherit dataset_np X Y splits X_train X_test y_train y_test model y_pred combined_df combined_csv combined_factor confusion_matrix accuracy; };
   };
 
 in
 {
-  inherit dataset_np X Y splits X_train X_test y_train y_test model y_pred combined_data_np accuracy;
+  inherit dataset_np X Y splits X_train X_test y_train y_test model y_pred combined_df combined_csv combined_factor confusion_matrix accuracy;
   default = allDerivations;
 }
