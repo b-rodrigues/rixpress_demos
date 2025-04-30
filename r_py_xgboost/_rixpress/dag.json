@@ -1,0 +1,88 @@
+{
+  "derivations": [
+    {
+      "deriv_name": ["dataset_np"],
+      "depends": [],
+      "unserialize_function": {},
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["X"],
+      "depends": ["dataset_np"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["Y"],
+      "depends": ["dataset_np"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["indices"],
+      "depends": ["X"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["splits"],
+      "depends": ["X", "Y", "indices"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["X_train"],
+      "depends": ["splits"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["X_test"],
+      "depends": ["splits"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["y_train"],
+      "depends": ["splits"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["y_test"],
+      "depends": ["splits"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["test_indices"],
+      "depends": ["splits"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["model"],
+      "depends": ["X_train", "y_train"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["y_pred"],
+      "depends": ["X_test", "model"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["combined_dataset_np"],
+      "depends": ["dataset_np", "test_indices", "y_pred"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["accuracy"],
+      "depends": ["y_test", "y_pred"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    }
+  ]
+}
