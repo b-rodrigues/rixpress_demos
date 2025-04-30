@@ -112,5 +112,8 @@ adjust_import(
 add_import("from sklearn.metrics import accuracy_score", "default.nix")
 add_import("from pandas import DataFrame", "default.nix")
 
+# Plot DAG for CI
+dag_for_ci()
+
 # Now we can build
 rxp_make()
