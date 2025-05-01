@@ -1,14 +1,22 @@
 library(rix)
 
 rix(
-  date = "2025-04-29",
+  date = "2025-04-29", # Or keep your original date
   r_pkgs = c(
     "dplyr",
-    "data.table",
+    "data.table", # Needed for the R loading function
     "ggplot2",
     "scales",
     "readr",
     "rlang"
+  ),
+  py_conf = list(
+    py_version = "3.13",
+    py_pkgs = c(
+    "pandas",
+    "numpy",
+    "scikit-learn"
+    )
   ),
   git_pkgs = list(
     list(

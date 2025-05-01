@@ -1,0 +1,178 @@
+{
+  "derivations": [
+    {
+      "deriv_name": ["train_data"],
+      "depends": [],
+      "unserialize_function": {},
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["test_data"],
+      "depends": [],
+      "unserialize_function": {},
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["processed_train"],
+      "depends": ["train_data"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["processed_test"],
+      "depends": ["test_data"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["plot_train_sex"],
+      "depends": ["processed_train"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["plot_test_pclass"],
+      "depends": ["processed_test"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["train_data_csv"],
+      "depends": ["train_data"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["test_data_csv"],
+      "depends": ["test_data"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["preprocess_train_step"],
+      "depends": ["train_data_csv"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["py_processed_train"],
+      "depends": ["preprocess_train_step"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["train_stats"],
+      "depends": ["preprocess_train_step"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["py_processed_test"],
+      "depends": ["test_data_csv", "train_stats"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["split_train_data"],
+      "depends": ["py_processed_train"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["predictors_train_py"],
+      "depends": ["split_train_data"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["target_train_py"],
+      "depends": ["split_train_data"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["predictors_train_final"],
+      "depends": ["predictors_train_py"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["train_val_split_data"],
+      "depends": ["target_train_py", "predictors_train_final"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["X_train"],
+      "depends": ["train_val_split_data"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["X_val"],
+      "depends": ["train_val_split_data"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["y_train"],
+      "depends": ["train_val_split_data"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["y_val"],
+      "depends": ["train_val_split_data"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["model"],
+      "depends": ["X_train", "y_train"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["y_pred_val"],
+      "depends": ["X_val", "model"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["validation_accuracy"],
+      "depends": ["y_val", "y_pred_val"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["test_ids_py"],
+      "depends": ["py_processed_test"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["py_test_features"],
+      "depends": ["py_processed_test"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["test_predictions"],
+      "depends": ["model", "py_test_features"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["output_df"],
+      "depends": ["test_ids_py", "test_predictions"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["result_csv"],
+      "depends": ["output_df"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    }
+  ]
+}
