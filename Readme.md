@@ -12,19 +12,29 @@ traditional unit testing is cumbersome. Instead, these pipelines execute
 full workflows to ensure everything behaves as expected. This approach provides
 a practical way to catch regressions or breaking changes.
 
-The outputs of the pipelines are published and can be viewed
-[here](https://b-rodrigues.github.io/rixpress_demos/).
+The outputs of the pipelines that build a Quarto or RMD document are published
+and can be viewed [here](https://b-rodrigues.github.io/rixpress_demos/).
 
 ## Examples list
 
 - `basic_r`: simplest example;
-- `r_qs`: simplest example, busing `{qs}` for serialisation instead of `saveRDS/readRDS`;
-- `many_inputs_example`: shows how to read many data files under a single folder in one go;
-- `obis_example`: Python-R pipeline that illustrates how to analyze a shapefile, and data from an API;
-- `python_r`: simple Python-R pipeline;
+- `r_qs`: simplest example, using `{qs}` for serialisation instead of
+  `saveRDS/readRDS`;
+- `many_inputs_example`: shows how to read many data files under a single folder
+  in one go;
+- `obis_example`: Python-R pipeline that illustrates how to analyze a shapefile,
+  and data from an API;
+- `r_python_quarto`: simple Python-R pipeline that compiles a Quarto html doc;
+- `r_python_rmd`: simple Python-R pipeline that compiles a RMD html doc;
 - `python_r_typst`: simple Python-R pipeline that compiles to a Typst document;
-- `r_py_json`: Python-R pipeline with direct transfer of data from Python to R using json;
-- `r_multi_envs`: R pipeline that illustrates how different environments can be used for different derivations
-- `yanai_lercher_2020`: Python-R pipeline, an adaptation of the code of the paper 'Selective attention in hypothesis-driven data analysis'
+- `r_py_json`: Python-R pipeline with direct transfer of data from Python to R
+  using json;
+- `r_multi_envs`: R pipeline that illustrates how different environments can be
+  used for different derivations
+- `yanai_lercher_2020`: Python-R pipeline, an adaptation of the code of the
+  paper 'Selective attention in hypothesis-driven data analysis'
+- `r_py_xgboost`: Python-R pipeline that uses the Python `xgboost` library to
+  train an extreme gradient boosting model. Predictions are then passed to R to
+  compute the confusion matrix using `{yardstick}`.
 
- Each example contains a readme with more details.
+Each example contains a readme with more details.
