@@ -1,4 +1,4 @@
-name: python_r demo
+name: r_python_quarto demo
 
 on:
   repository_dispatch:
@@ -11,7 +11,7 @@ on:
 permissions: write-all
 
 jobs:
-  python-r:
+  r-python-quarto:
     runs-on: ubuntu-latest
     env:
       GH_TOKEN: ${{ github.token }}
@@ -19,7 +19,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./python_r
+        working-directory: ./r_python_quarto
 
     steps:
       - name: Checkout repository
@@ -71,11 +71,11 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
-      - name: Copy output `page` to docs/python_r
+      - name: Copy output `page` to docs/r_python_quarto
         run: |
-          cp -r pipeline-output/* ../docs/python_r
-          rm ../docs/python_r/index.html
-          mv ../docs/python_r/page.html ../docs/python_r/index.html
+          cp -r pipeline-output/* ../docs/r_python_quarto
+          rm ../docs/r_python_quarto/index.html
+          mv ../docs/r_python_quarto/page.html ../docs/r_python_quarto/index.html
 
       - name: Push docs
         run: |
@@ -85,6 +85,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            git commit -m "updated output of python_r pipeline"
+            git commit -m "updated output of r_python_quarto pipeline"
             git push origin master
           fi
