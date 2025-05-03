@@ -1,11 +1,11 @@
 ## Multi-language pipeline example
 
-This example demonstrates how Python and R can work together to build a Quarto
+This example demonstrates how Python and R can work together to build a Rmd
 document that compiles to an HTML file.
 
 - **`gen-env.R`**: An R script that uses the `{rix}` package to generate a Nix
   expression. This expression defines an environment with both R and Python,
-  along with the necessary packages, including Quarto.
+  along with the necessary packages, including rmarkdown and pandoc.
 - **`gen-pipeline.R`**: An R script that sets up a multi-language pipeline by
   defining derivations. For example:
 
