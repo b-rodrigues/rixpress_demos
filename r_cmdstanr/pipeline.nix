@@ -34,20 +34,6 @@ let
     '';
   };
 
-  model = makeRDerivation {
-    name = "model";
-    buildInputs = defaultBuildInputs;
-    configurePhase = defaultConfigurePhase;
-    buildPhase = ''
-      export CMDSTAN=${defaultPkgs.cmdstan}/opt/cmdstan
-      Rscript -e "
-        source('libraries.R')
-        bayesian_linear_regression_model <- readRDS('${bayesian_linear_regression_model}/bayesian_linear_regression_model')
-        model <- cmdstan_model_wrapper(bayesian_linear_regression_model, compile = FALSE)
-        saveRDS(model, 'model')"
-    '';
-  };
-
   parameters = makeRDerivation {
     name = "parameters";
     buildInputs = defaultBuildInputs;
@@ -102,30 +88,29 @@ let
     '';
   };
 
-  fit = makeRDerivation {
-    name = "fit";
+  model = makeRDerivation {
+    name = "model";
     buildInputs = defaultBuildInputs;
     configurePhase = defaultConfigurePhase;
     buildPhase = ''
       export CMDSTAN=${defaultPkgs.cmdstan}/opt/cmdstan
       Rscript -e "
         source('libraries.R')
-        model <- readRDS('${model}/model')
+        bayesian_linear_regression_model <- readRDS('${bayesian_linear_regression_model}/bayesian_linear_regression_model')
         inputs <- readRDS('${inputs}/inputs')
-        model <- model\$compile
-        fit <- model()\$sample(data = inputs, seed = 22)
-        saveRDS(fit, 'fit')"
+        model <- cmdstan_model_wrapper(stan_string = bayesian_linear_regression_model, inputs = inputs, seed = 22)
+        "save_model"(model, 'model')"
     '';
   };
 
   # Generic default target that builds all derivations
   allDerivations = defaultPkgs.symlinkJoin {
     name = "all-derivations";
-    paths = with builtins; attrValues { inherit bayesian_linear_regression_model model parameters x y inputs fit; };
+    paths = with builtins; attrValues { inherit bayesian_linear_regression_model parameters x y inputs model; };
   };
 
 in
 {
-  inherit bayesian_linear_regression_model model parameters x y inputs fit;
+  inherit bayesian_linear_regression_model parameters x y inputs model;
   default = allDerivations;
 }

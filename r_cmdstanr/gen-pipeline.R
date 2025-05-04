@@ -26,11 +26,6 @@ model {
 '
   ),
   rxp_r(
-    model,
-    cmdstan_model_wrapper(bayesian_linear_regression_model, compile = FALSE),
-    additional_files = "functions.R"
-  ),
-  rxp_r(
     parameters,
     list(
       N = 100,
@@ -56,8 +51,15 @@ model {
     list(N = parameters$N, x = x, y = y)
   ),
   rxp_r(
-    fit,
-    model$compile$sample(data = inputs, seed = 22)
+    model,
+    cmdstan_model_wrapper(
+      stan_string = bayesian_linear_regression_model,
+      inputs = inputs,
+      seed = 22
+    ),
+    additional_files = "functions.R",
+    serialize_function = "save_model",
+    set_env = "CMDSTAN = ${defaultPkgs.cmdstan}/opt/cmdstan"
   )
 ) |>
   rixpress()
