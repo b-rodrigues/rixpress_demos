@@ -20,21 +20,7 @@ let
     };
 
   # Define all derivations
-    bayesian_linear_regression_model = makeRDerivation {
-    name = "bayesian_linear_regression_model";
-    buildInputs = defaultBuildInputs;
-    configurePhase = defaultConfigurePhase;
-    buildPhase = ''
-      Rscript -e "
-        source('libraries.R')
-        x <- readRDS('${x}/x')
-        y <- readRDS('${y}/y')
-        bayesian_linear_regression_model <- '\ndata {\n  int<lower=1> N;\n  vector[N] x;\n  vector[N] y;\n}\nparameters {\n  real alpha;\n  real beta;\n  real<lower=0> sigma;\n}\nmodel {\n  // Priors\n  alpha ~ normal(0, 5);\n  beta  ~ normal(0, 5);\n  sigma ~ inv_gamma(1, 1);\n\n  // Likelihood\n  y ~ normal(alpha + beta * x, sigma);\n}\n'
-        saveRDS(bayesian_linear_regression_model, 'bayesian_linear_regression_model')"
-    '';
-  };
-
-  parameters = makeRDerivation {
+    parameters = makeRDerivation {
     name = "parameters";
     buildInputs = defaultBuildInputs;
     configurePhase = defaultConfigurePhase;
@@ -90,15 +76,17 @@ let
 
   model = makeRDerivation {
     name = "model";
-    buildInputs = defaultBuildInputs;
+     src = defaultPkgs.lib.fileset.toSource {
+      root = ./.;
+      fileset = defaultPkgs.lib.fileset.unions [ ./model.stan ];
+    };
+   buildInputs = defaultBuildInputs;
     configurePhase = defaultConfigurePhase;
     buildPhase = ''
       export CMDSTAN=${defaultPkgs.cmdstan}/opt/cmdstan
       Rscript -e "
         source('libraries.R')
-        bayesian_linear_regression_model <- readRDS('${bayesian_linear_regression_model}/bayesian_linear_regression_model')
-        inputs <- readRDS('${inputs}/inputs')
-        model <- cmdstan_model_wrapper(stan_string = bayesian_linear_regression_model, inputs = inputs, seed = 22)
+        model <- cmdstan_model_wrapper(model_stan_path = ${model.stan}, inputs = inputs, seed = 22)
         "save_model"(model, 'model')"
     '';
   };
@@ -106,11 +94,11 @@ let
   # Generic default target that builds all derivations
   allDerivations = defaultPkgs.symlinkJoin {
     name = "all-derivations";
-    paths = with builtins; attrValues { inherit bayesian_linear_regression_model parameters x y inputs model; };
+    paths = with builtins; attrValues { inherit parameters x y inputs model; };
   };
 
 in
 {
-  inherit bayesian_linear_regression_model parameters x y inputs model;
+  inherit parameters x y inputs model;
   default = allDerivations;
 }

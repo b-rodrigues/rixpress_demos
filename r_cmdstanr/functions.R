@@ -1,15 +1,11 @@
 cmdstan_model_wrapper <- function(
-  stan_string = NULL,
+  model_stan_path,
   inputs,
   seed,
   ...
 ) {
-  stan_file <- tempfile(pattern = "model_", fileext = ".stan")
-
-  writeLines(stan_string, con = stan_file)
-
   model <- cmdstanr::cmdstan_model(
-    stan_file = stan_file,
+    stan_file = model_stan_path,
     ...
   )
 

@@ -59,7 +59,7 @@ model {
     ),
     additional_files = "functions.R",
     serialize_function = "save_model",
-    set_env = "CMDSTAN = ${defaultPkgs.cmdstan}/opt/cmdstan"
+    env_var = c("CMDSTAN" = "${defaultPkgs.cmdstan}/opt/cmdstan")
   )
 ) |>
   rixpress()
