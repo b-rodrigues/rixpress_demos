@@ -50,6 +50,11 @@ jobs:
           nix-shell --quiet --run "Rscript -e 'source(\"gen-pipeline.R\")'"
           cat pipeline.nix
 
+      - name: build pipeline
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_make()'"
+
+
       - name: Inspect built derivations
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
