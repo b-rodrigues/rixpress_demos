@@ -1,0 +1,4 @@
+This is a simple text file
+I really like plain text is very easy to manipulate
+works the same across operating systems and tools
+Plain text is good
