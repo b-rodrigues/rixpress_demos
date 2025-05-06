@@ -1,15 +1,14 @@
 # Using cmdstanr with rixpress
 
-`{cmdstanr}` is a package that simplifies the process of defining and 
-estimating the parameters of bayesian statistical models using `stan`.
+`{cmdstanr}` is an R package that simplifies defining and estimating parameters
+of Bayesian statistical models using `stan`.
 
-It is only available on GitHub, and is actually a high-level interface
-to a command-line tool called `cmdstan`. The way `cmdstan` and `{cmdstanr}`
-work can make it tricky to use with `{rixpress}`, so this example
-will illustrate how to use it.
+Available only on GitHub, `{cmdstanr}` serves as a high-level interface to
+`cmdstan`, a command-line tool. The interaction between `cmdstan` and
+`{cmdstanr}` can present challenges when used with `{rixpress}`. This example
+illustrates how to use `{rixpress}` effectively with `{cmdstanr}`.
 
-The first step is of course to define the execution environment of the 
-pipeline, as usual:
+The first step, as always, is to define the pipeline's execution environment:
 
 ```r
 library(rix)
@@ -36,38 +35,19 @@ rix(
 )
 ```
 
-Note that `cmdstan` is added to the system packages and that `{cmdstanr}` is
-installed from GitHub (as it is not available from CRAN).
+Note that `cmdstan` is added as a system package, and `{cmdstanr}` is installed
+from GitHub, as it is not available on CRAN.
 
-Then, we define the pipeline:
+Next, we define the pipeline:
 
 ```r
 library(rixpress)
 
 list(
-  rxp_r(
+  rxp_r_file(
     bayesian_linear_regression_model,
-    '
-data {
-  int<lower=1> N;
-  vector[N] x;
-  vector[N] y;
-}
-parameters {
-  real alpha;
-  real beta;
-  real<lower=0> sigma;
-}
-model {
-  // Priors
-  alpha ~ normal(0, 5);
-  beta  ~ normal(0, 5);
-  sigma ~ inv_gamma(1, 1);
-
-  // Likelihood
-  y ~ normal(alpha + beta * x, sigma);
-}
-'
+    "model.stan",
+    readLines
   ),
   rxp_r(
     parameters,
@@ -109,9 +89,57 @@ model {
   rixpress()
 ```
 
-There are several important things that you should take note of:
+Several important points to note:
 
-- the model is written as a string, but it could be defined in a file (in which
-  case you would then use `rxp_r_file()` with `readLines()` to bring the model
-  into the pipeline)
-- 
+- The Stan model is written in a text file named `model.stan` and included in
+  the pipeline using `readLines()`. This might seem unusual to those familiar
+  with `{cmdstanr}`; bear with me for now.
+- We then define parameters and data: `parameters`, `y`, `x`, and `inputs`.
+- The model and inputs are passed to a custom function,
+  `cmdstan_model_wrapper()`. Here is the wrapper's definition:
+
+  ```r
+  cmdstan_model_wrapper <- function(
+    stan_string = NULL,
+    inputs,
+    seed,
+    ...
+  ) {
+    stan_file <- tempfile(pattern = "model_", fileext = ".stan")
+
+    writeLines(stan_string, con = stan_file)
+
+    model <- cmdstanr::cmdstan_model(
+      stan_file = stan_file,
+      ...
+    )
+
+    model$sample(data = inputs, seed = seed) # Use the passed seed
+  }
+  ```
+  This wrapper function takes the model code as a string and writes it to a
+  temporary file. This step is necessary because, even though the model exists
+  as a file in the project, this method ensures the model code is accessible
+  within the hermetic build environment (sandbox) of `{rixpress}`. Using the
+  `additional_files` argument of `rxp_r()` for the `.stan` file can lead to
+  permission errors when `cmdstan` attempts to compile the model, possibly due
+  to interactions with the Nix sandbox. This wrapper approach bypasses that
+  issue. Furthermore, both model compilation (implicitly by `cmdstan_model`) and
+  sampling (`model$sample`) must occur within the same pipeline step (and thus
+  the same sandbox). This is because the `model` object returned by
+  `cmdstan_model` primarily contains a path to the compiled Stan executable. If
+  compilation and sampling were in separate steps, the path to the compiled
+  model would not be valid in the subsequent sandbox, causing `model$sample` to
+  fail.
+
+- Finally, it's important to use a custom serialization function, `save_model`:
+  ```r
+  save_model <- function(fitted_model, path, ...) {
+    fitted_model$save_object(path, ...)
+  }
+  ```
+  The `{cmdstanr}` documentation recommends using the `$save_object()` method to
+  ensure a fitted Stan model can be reliably saved and reused. This method is
+  essentially a wrapper around `saveRDS()` that handles the specific needs of
+  `cmdstanr` objects. Since it uses `saveRDS()` internally, the saved model can
+  be loaded as usual with `readRDS()`, for example, via `rxp_read("model")`.

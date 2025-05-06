@@ -1,29 +1,10 @@
 library(rixpress)
 
 list(
-  rxp_r(
+  rxp_r_file(
     bayesian_linear_regression_model,
-    '
-data {
-  int<lower=1> N;
-  vector[N] x;
-  vector[N] y;
-}
-parameters {
-  real alpha;
-  real beta;
-  real<lower=0> sigma;
-}
-model {
-  // Priors
-  alpha ~ normal(0, 5);
-  beta  ~ normal(0, 5);
-  sigma ~ inv_gamma(1, 1);
-
-  // Likelihood
-  y ~ normal(alpha + beta * x, sigma);
-}
-'
+    "model.stan",
+    readLines
   ),
   rxp_r(
     parameters,
@@ -62,4 +43,7 @@ model {
     env_var = c("CMDSTAN" = "${defaultPkgs.cmdstan}/opt/cmdstan")
   )
 ) |>
-  rixpress()
+  rixpress(build = FALSE)
+
+# Plot DAG for CI
+dag_for_ci()
