@@ -3,7 +3,7 @@ library(rix)
 # Environment to run some derivations
 rix(
   date = "2025-03-31",
-  r_pkgs = "reticulate",
+  r_pkgs = c("reticulate"),
   py_conf = list(
     "py_version" = "3.12",
     "py_pkgs" = c("pandas", "polars", "pyarrow")
