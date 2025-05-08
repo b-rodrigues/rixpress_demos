@@ -3,7 +3,7 @@ library(igraph)
 
 d0 <- rxp_py_file(
   name = mtcars_pl,
-  path = 'data/mtcars.csv',
+  path = 'mtcars.csv',
   read_function = "lambda x: polars.read_csv(x, separator='|')",
   nix_env = "py-env.nix"
 )
