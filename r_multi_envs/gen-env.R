@@ -3,6 +3,19 @@ library(rix)
 # Environment to run some derivations
 rix(
   date = "2025-03-31",
+  py_conf = list(
+    "py_version" = "3.12",
+    "py_pkgs" = c("pandas", "polars", "pyarrow")
+  ),
+  ide = "none",
+  project_path = ".",
+  overwrite = TRUE
+)
+
+file.rename("default.nix", "py-env.nix")
+
+rix(
+  date = "2025-03-31",
   r_pkgs = c("dplyr"),
   ide = "none",
   project_path = ".",
