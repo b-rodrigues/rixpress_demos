@@ -16,22 +16,26 @@ d1 <- rxp_py(
   nix_env = "py-env.nix"
 )
 
+d2 <- rxp_py2r(
+  name = mtcars_am,
+  expr = mtcars_pl_am
+)
 
-d2 <- rxp_r(
+d3 <- rxp_r(
   mtcars_head,
   my_head(mtcars_am),
   additional_files = "functions.R",
   nix_env = "default.nix"
 )
 
-d3 <- rxp_r(
+d4 <- rxp_r(
   mtcars_tail,
   my_tail(mtcars_head),
   additional_files = "functions.R",
   nix_env = "default.nix"
 )
 
-d4 <- rxp_r(
+d5 <- rxp_r(
   mtcars_mpg,
   select(mtcars_tail, mpg),
   nix_env = "default2.nix"
@@ -44,7 +48,7 @@ doc <- rxp_quarto(
   nix_env = "quarto-env.nix"
 )
 
-derivs <- list(d0, d1, d2, d3, d4, doc)
+derivs <- list(d0, d1, d2, d3, d4, d5, doc)
 
 rixpress(derivs, project_path = ".")
 
