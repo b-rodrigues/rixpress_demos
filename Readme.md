@@ -29,7 +29,7 @@ and can be viewed [here](https://b-rodrigues.github.io/rixpress_demos/).
 - `python_r_typst`: simple Python-R pipeline that compiles to a Typst document;
 - `r_py_json`: Python-R pipeline with direct transfer of data from Python to R
   using json;
-- `r_multi_envs`: R pipeline that illustrates how different environments can be
+- `r_multi_envs`: Python-R pipeline that illustrates how different environments can be
   used for different derivations
 - `yanai_lercher_2020`: Python-R pipeline, an adaptation of the code of the
   paper 'Selective attention in hypothesis-driven data analysis'
