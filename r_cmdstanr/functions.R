@@ -8,7 +8,7 @@ cmdstan_model_wrapper <- function(
 
   writeLines(stan_string, con = stan_file)
 
-  model <- cmdstanr::cmdstan_model(
+  model <- cmdstan_model(
     stan_file = stan_file,
     ...
   )
