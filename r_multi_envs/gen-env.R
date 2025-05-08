@@ -50,7 +50,7 @@ file.rename("default.nix", "quarto-env.nix")
 # Main environment to run the pipeline
 rix(
   date = "2025-03-31",
-  r_pkgs = c("igraph"),
+  r_pkgs = c("igraph", "reticulate"),
   git_pkgs = list(
     list(
       package_name = "rix",
