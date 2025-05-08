@@ -18,7 +18,8 @@ d1 <- rxp_py(
 
 d2 <- rxp_py2r(
   name = mtcars_am,
-  expr = mtcars_pl_am
+  expr = mtcars_pl_am,
+  nix_env = "py-env.nix"
 )
 
 d3 <- rxp_r(
