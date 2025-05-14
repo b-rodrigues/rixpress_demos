@@ -46,7 +46,7 @@ list(
     expr = dplyr::select(mtcars_tail, mpg)
   ),
 
-  rxp_quarto(
+  rxp_qmd(
     name = page,
     qmd_file = "my_doc/page.qmd",
     additional_files = c("my_doc/content.qmd", "my_doc/images")

@@ -42,7 +42,7 @@ d5 <- rxp_r(
   nix_env = "default2.nix"
 )
 
-doc <- rxp_quarto(
+doc <- rxp_qmd(
   page,
   "page.qmd",
   additional_files = c("content.qmd", "images"),

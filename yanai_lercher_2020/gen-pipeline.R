@@ -47,7 +47,7 @@ d7 <- rxp_r(
   additional_files = "functions.R"
 )
 
-doc <- rxp_quarto(
+doc <- rxp_qmd(
   name = doc,
   qmd_file = "md_source/source.qmd",
   additional_files = c("md_source/gorilla")

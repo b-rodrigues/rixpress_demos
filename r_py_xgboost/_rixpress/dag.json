@@ -1,0 +1,94 @@
+{
+  "derivations": [
+    {
+      "deriv_name": ["dataset_np"],
+      "depends": [],
+      "unserialize_function": {},
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["X"],
+      "depends": ["dataset_np"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["Y"],
+      "depends": ["dataset_np"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["splits"],
+      "depends": ["X", "Y"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["X_train"],
+      "depends": ["splits"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["X_test"],
+      "depends": ["splits"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["y_train"],
+      "depends": ["splits"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["y_test"],
+      "depends": ["splits"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["model"],
+      "depends": ["X_train", "y_train"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["y_pred"],
+      "depends": ["X_test", "model"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["combined_df"],
+      "depends": ["y_test", "y_pred"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["combined_csv"],
+      "depends": ["combined_df"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["combined_factor"],
+      "depends": ["combined_csv"],
+      "unserialize_function": ["\"read.csv\""],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["confusion_matrix"],
+      "depends": ["combined_factor"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["accuracy"],
+      "depends": ["y_test", "y_pred"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    }
+  ]
+}

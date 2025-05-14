@@ -42,7 +42,7 @@ list(
     expr = occurrence(species, geometry = atlantic)
   )
 
-  #doc = rxp_quarto(
+  #doc = rxp_qmd(
   #  name = page,
   #  qmd_file = "my_doc/page.qmd",
   #  additional_files = c("my_doc/content.qmd", "my_doc/images")
