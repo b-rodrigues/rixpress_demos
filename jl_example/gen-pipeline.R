@@ -32,6 +32,6 @@ rxp_r(
 ) |>
   rixpress(build = TRUE)
 
-#plot_dag()
+dag_for_ci()
 
 #rxp_make()
