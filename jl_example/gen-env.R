@@ -1,7 +1,7 @@
 library(rix)
 
 rix(
-  date = "2025-05-21",
+  date = "2025-05-19",
   r_pkgs = c(
     "arrow",
     "dplyr",
