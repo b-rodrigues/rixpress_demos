@@ -7,7 +7,7 @@ rix(
     "dplyr",
     "tidyr",
     "ggplot2",
-    "hexbin",
+    "hexbin"
   ),
   git_pkgs = list(
     list(
