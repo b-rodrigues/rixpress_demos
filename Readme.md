@@ -22,6 +22,7 @@ and can be viewed [here](https://b-rodrigues.github.io/rixpress_demos/).
   `saveRDS/readRDS`;
 - `many_inputs_example`: shows how to read many data files under a single folder
   in one go;
+- `jl_example`: shows how to use Julia;
 - `obis_example`: Python-R pipeline that illustrates how to analyze a shapefile,
   and data from an API;
 - `r_python_quarto`: simple Python-R pipeline that compiles a Quarto html doc;
