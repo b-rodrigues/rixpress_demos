@@ -75,7 +75,7 @@ jobs:
         run: |
           rm ../docs/jl_example/index.html
           cp -r pipeline-output/* ../docs/jl_example
-          mv ../docs/jl_example/julia_doc.html ../docs/jl_example/index.html
+          mv ../docs/jl_example/document.html ../docs/jl_example/index.html
 
       - name: Push docs
         run: |
