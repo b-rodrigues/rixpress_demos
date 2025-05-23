@@ -62,6 +62,29 @@ jobs:
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
 
-      - name: Check out data
+      - name: Put generated HTML in workdir
         run: |
-          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_read(\"laplace_long_df\") |> head()'"
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_copy(\"julia_doc\")'"
+
+      - name: Set git config
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Copy output `page` to docs/yanai_lercher
+        run: |
+          rm ../docs/jl_example/index.html
+          cp -r pipeline-output/* ../docs/jl_example
+          mv ../docs/jl_example/source.html ../docs/jl_example/index.html
+
+      - name: Push docs
+        run: |
+          cd ..
+          git pull --rebase --autostash origin master
+          git add docs/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "updated output of jl_example pipeline"
+            git push origin master
+          fi

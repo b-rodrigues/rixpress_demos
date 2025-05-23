@@ -5,9 +5,11 @@ rix(
   r_pkgs = c(
     "arrow",
     "dplyr",
-    "tidyr",
     "ggplot2",
-    "hexbin"
+    "hexbin",
+    "quarto",
+    "tidyr",
+    "visNetwork"
   ),
   git_pkgs = list(
     list(

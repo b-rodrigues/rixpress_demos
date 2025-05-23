@@ -1,0 +1,24 @@
+---
+title: "Julia-R pipeline"
+format:
+  html:
+    embed-resources: true
+    toc: true
+---
+
+This is an example that shows how `{rixpress}` handles Julia and R derivations.
+
+The DAG of the pipeline looks like this:
+
+```{r}
+rixpress::rxp_read("dag")
+```
+
+The purple icons are derivations that build Julia artifacts, the blue ones use R
+and the last one is this Quarto document.
+
+Julia is used to generate the underlying data to this `{ggplot2}` plot:
+
+```{r}
+rixpress::rxp_read("gg")
+```
