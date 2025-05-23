@@ -6,6 +6,8 @@ format:
     toc: true
 ---
 
+Example adapted from: https://github.com/frankiethull/waveshaders/tree/main/experiments/simple_example
+
 This is an example that shows how `{rixpress}` handles Julia and R derivations.
 
 The DAG of the pipeline looks like this:
