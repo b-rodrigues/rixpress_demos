@@ -1,5 +1,5 @@
 This example illustrates how each derivation can run in a dedicated environment.
-Start by looking at `gen-env.R`. This script uses `{rix}` to generate 3 environments:
+Start by looking at `gen-env.R`. This script uses `{rix}` to generate 4 environments:
 
 - py-env.nix: Python environment
 - default2.nix: Environment with dplyr
