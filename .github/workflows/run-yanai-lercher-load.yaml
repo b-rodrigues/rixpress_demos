@@ -1,4 +1,4 @@
-name: yanai_lercher demo
+name: yanai_lercher_rxp_load demo
 
 on:
   repository_dispatch:
