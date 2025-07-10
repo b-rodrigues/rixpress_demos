@@ -121,7 +121,9 @@ plot1
 
 
 ```{r}
-rixpress::rxp_load("plot2")
+library(rixpress)
+
+rxp_load("plot2")
 
 plot2
 ```
