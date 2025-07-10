@@ -112,7 +112,7 @@ rixpress::rxp_read("gender_dist")
 and some graphs:
 
 ```{r}
-rixpress::rxp_read("plot1")
+rxp_read("plot1")
 ```
 
 
