@@ -6,7 +6,10 @@ let
   defaultConfigurePhase = ''
     cp ${./_rixpress/default_libraries.py} libraries.py
     cp ${./_rixpress/default_libraries.R} libraries.R
-    mkdir -p $out
+    mkdir -p $out  
+    mkdir -p .julia_depot  
+    export JULIA_DEPOT_PATH=$PWD/.julia_depot  
+    export HOME_PATH=$PWD
   '';
   
   # Function to create R derivations
