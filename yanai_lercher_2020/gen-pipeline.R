@@ -61,4 +61,4 @@ rixpress(rxp_list, project_path = ".", build = FALSE)
 adjust_import("import pillow", "from PIL import Image")
 
 # Plot DAG for CI
-dag_for_ci()
+rxp_dag_for_ci()

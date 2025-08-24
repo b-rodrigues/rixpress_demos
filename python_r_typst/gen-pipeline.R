@@ -57,4 +57,4 @@ rxp_list <- list(d0, d1, d2, d3, d3_1, d4, d4_1, d5, doc)
 rixpress(rxp_list, project_path = ".")
 
 # Plot DAG for CI
-dag_for_ci()
+rxp_dag_for_ci()

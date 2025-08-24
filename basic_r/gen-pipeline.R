@@ -21,4 +21,4 @@ list(
   rixpress(project_path = ".", build = FALSE)
 
 # Plot DAG for CI
-dag_for_ci()
+rxp_dag_for_ci()

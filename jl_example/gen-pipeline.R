@@ -46,6 +46,6 @@ list(
 ) |>
   rixpress(build = TRUE)
 
-dag_for_ci()
+rxp_dag_for_ci()
 
 #rxp_make()

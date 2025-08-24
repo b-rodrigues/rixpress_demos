@@ -49,5 +49,5 @@ list(
 ) |>
   rixpress(build = TRUE)
 
-# dag_for_ci() # Generate DAG image
+# rxp_dag_for_ci() # Generate DAG image
 # rxp_make()   # Manually trigger the build

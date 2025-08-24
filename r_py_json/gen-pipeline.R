@@ -31,4 +31,4 @@ list(
 
 
 # Plot DAG for CI
-dag_for_ci()
+rxp_dag_for_ci()

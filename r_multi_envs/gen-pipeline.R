@@ -54,4 +54,4 @@ derivs <- list(d0, d1, d2, d3, d4, d5, doc)
 rixpress(derivs, project_path = ".")
 
 # Plot DAG for CI
-dag_for_ci()
+rxp_dag_for_ci()
