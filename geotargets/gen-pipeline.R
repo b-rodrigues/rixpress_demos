@@ -30,7 +30,7 @@ list(
     additional_files = "functions.R"
   )
 ) |>
-  rixpress(project_path = ".")
+  rxp_populate(project_path = ".")
 
 # Plot DAG for CI
 #dag_obj <- plot_dag(return_igraph = TRUE)

@@ -47,7 +47,7 @@ list(
     additional_files = "functions.R"
   )
 ) |>
-  rixpress(build = TRUE)
+  rxp_populate(build = TRUE)
 
 # rxp_dag_for_ci() # Generate DAG image
 # rxp_make()   # Manually trigger the build

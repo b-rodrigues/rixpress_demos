@@ -86,7 +86,7 @@ list(
     env_var = c("CMDSTAN" = "${defaultPkgs.cmdstan}/opt/cmdstan")
   )
 ) |>
-  rixpress()
+  rxp_populate()
 ```
 
 Several important points to note:

@@ -43,7 +43,7 @@ list(
     env_var = c("CMDSTAN" = "${defaultPkgs.cmdstan}/opt/cmdstan")
   )
 ) |>
-  rixpress(build = FALSE)
+  rxp_populate(build = FALSE)
 
 # Plot DAG for CI
 rxp_dag_for_ci()

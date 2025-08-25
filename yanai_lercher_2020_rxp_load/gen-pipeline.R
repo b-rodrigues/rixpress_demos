@@ -56,7 +56,7 @@ doc <- rxp_qmd(
 rxp_list <- list(d0, d1, d2, d3, d4, d5, d6, d7, doc)
 
 # Set build to FALSE, because I need to adjust imports
-rixpress(rxp_list, project_path = ".", build = FALSE)
+rxp_populate(rxp_list, project_path = ".", build = FALSE)
 
 adjust_import("import pillow", "from PIL import Image")
 

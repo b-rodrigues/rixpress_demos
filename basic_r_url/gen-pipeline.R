@@ -18,7 +18,7 @@ list(
     expr = dplyr::select(filtered_mtcars, mpg)
   )
 ) |>
-  rixpress(project_path = ".", build = FALSE)
+  rxp_populate(project_path = ".", build = FALSE)
 
 # Plot DAG for CI
 rxp_dag_for_ci()

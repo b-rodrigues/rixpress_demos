@@ -52,7 +52,7 @@ list(
     additional_files = c("my_doc/content.qmd", "my_doc/images")
   )
 ) |>
-  rixpress(project_path = ".")
+  rxp_populate(project_path = ".")
 
 
 

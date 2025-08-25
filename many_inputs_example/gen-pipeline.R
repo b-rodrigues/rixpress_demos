@@ -4,8 +4,9 @@ list(
   rxp_r_file(
     name = mtcars_r,
     path = 'data',
-    read_function = \(x)
-      (readr::read_delim(list.files(x, full.names = TRUE), delim = '|')),
+    read_function = \(x) {
+      (readr::read_delim(list.files(x, full.names = TRUE), delim = '|'))
+    },
     copy_data_folder = TRUE
   ),
   rxp_py_file(
@@ -20,4 +21,4 @@ list(
     additional_files = "functions.py"
   )
 ) |>
-  rixpress(project_path = ".")
+  rxp_populate(project_path = ".", build = TRUE)

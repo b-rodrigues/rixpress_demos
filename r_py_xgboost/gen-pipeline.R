@@ -94,7 +94,7 @@ list(
     py_expr = "accuracy_score(y_test, y_pred)"
   )
 ) |>
-  rixpress(build = FALSE) # Need to set to FALSE because we
+  rxp_populate(build = FALSE) # Need to set to FALSE because we
 # adjust imports first
 
 adjust_import(

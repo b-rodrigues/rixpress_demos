@@ -52,7 +52,7 @@ list(
     additional_files = "my_doc/images"
   )
 ) |>
-  rixpress(project_path = ".")
+  rxp_populate(project_path = ".")
 
 
 # Plot DAG for CI

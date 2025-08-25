@@ -9,8 +9,8 @@ d0 <- rxp_py_file(
 )
 
 d1 <- rxp_py(
-# reticulate doesn't support polars DFs yet, so need to convert
-# first to pandas DF
+  # reticulate doesn't support polars DFs yet, so need to convert
+  # first to pandas DF
   name = mtcars_pl_am,
   py_expr = "mtcars_pl.filter(polars.col('am') == 1).to_pandas()",
   nix_env = "py-env.nix"
@@ -51,7 +51,7 @@ doc <- rxp_qmd(
 
 derivs <- list(d0, d1, d2, d3, d4, d5, doc)
 
-rixpress(derivs, project_path = ".")
+rxp_populate(derivs, project_path = ".", build = TRUE)
 
 # Plot DAG for CI
 rxp_dag_for_ci()

@@ -48,7 +48,7 @@ list(
   #  additional_files = c("my_doc/content.qmd", "my_doc/images")
   #)
 ) |>
-  rixpress(project_path = ".")
+  rxp_populate(project_path = ".", build = TRUE)
 
 # Plot DAG for CI
 rxp_dag_for_ci()

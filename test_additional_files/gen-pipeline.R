@@ -20,7 +20,7 @@ list(
     expr = head(r_example)
   )
 ) |>
-  rixpress(project_path = ".", build = FALSE)
+  rxp_populate(project_path = ".", build = FALSE)
 
 
 # Plot DAG for CI

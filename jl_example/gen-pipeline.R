@@ -44,7 +44,7 @@ list(
     qmd_file = "document.qmd",
   )
 ) |>
-  rixpress(build = TRUE)
+  rxp_populate(build = TRUE)
 
 rxp_dag_for_ci()
 
