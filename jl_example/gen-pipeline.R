@@ -11,26 +11,27 @@ list(
      d_size, \
      d_size \
    )",
-    additional_files = "functions.jl"
+    user_functions = "functions.jl"
   ),
 
   rxp_jl(
     laplace_df,
     'DataFrame(data, :auto)',
     serialize_function = 'arrow_write',
-    additional_files = "functions.jl"
+    user_functions = "functions.jl"
   ),
 
   rxp_r(
     laplace_long_df,
     prepare_data(laplace_df),
     unserialize_function = 'read_ipc_file',
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   ),
 
   rxp_r(
     gg,
-    make_gg(laplace_long_df)
+    make_gg(laplace_long_df),
+    user_functions = "functions.R"
   ),
 
   rxp_r(

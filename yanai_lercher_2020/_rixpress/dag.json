@@ -1,0 +1,58 @@
+{
+  "derivations": [
+    {
+      "deriv_name": ["gorilla_pixels"],
+      "depends": [],
+      "unserialize_function": {},
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["threshold_level"],
+      "depends": [],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["py_coords"],
+      "depends": ["gorilla_pixels", "threshold_level"],
+      "unserialize_function": ["pickle.load"],
+      "type": ["rxp_py"]
+    },
+    {
+      "deriv_name": ["raw_coords"],
+      "depends": ["py_coords"],
+      "unserialize_function": {},
+      "type": ["rxp_py2r"]
+    },
+    {
+      "deriv_name": ["coords"],
+      "depends": ["raw_coords"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["gender_dist"],
+      "depends": ["coords"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["plot1"],
+      "depends": ["coords"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["plot2"],
+      "depends": ["coords"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["doc"],
+      "depends": ["gender_dist", "plot1", "plot2"],
+      "unserialize_function": {},
+      "type": ["rxp_qmd"]
+    }
+  ]
+}

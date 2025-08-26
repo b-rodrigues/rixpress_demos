@@ -1,0 +1,31 @@
+/* Created by igraph 0.10.13-126-g31c4e6ffc */
+digraph {
+  0 [
+    label=d_size
+  ];
+  1 [
+    label=data
+  ];
+  2 [
+    label=laplace_df
+  ];
+  3 [
+    label=laplace_long_df
+  ];
+  4 [
+    label=dag
+  ];
+  5 [
+    label=gg
+  ];
+  6 [
+    label=julia_doc
+  ];
+
+  0 -> 1;
+  1 -> 2;
+  2 -> 3;
+  3 -> 5;
+  4 -> 6;
+  5 -> 6;
+}

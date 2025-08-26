@@ -17,7 +17,7 @@ let
       src = pkgs.fetchgit {
         url = "https://github.com/ropensci/rix/";
         rev = "HEAD";
-        sha256 = "sha256-RR5UNOuyOrUuz2e0TEPXIQ9K04TV9C4WvTe6aOs9WyQ=";
+        sha256 = "sha256-/oinpev8F3I8TcX+lKaF9hZFFryOjzkrQ5UjSnCX6Bk=";
       };
       propagatedBuildInputs = builtins.attrValues {
         inherit (pkgs.rPackages) 
@@ -33,7 +33,7 @@ let
       src = pkgs.fetchgit {
         url = "https://github.com/b-rodrigues/rixpress";
         rev = "HEAD";
-        sha256 = "sha256-KE0abhdSn5jgfOaysVl2ovkc7eo2LI4JggD5nx2yh8s=";
+        sha256 = "sha256-iYy25iKmO2lWF2+x87932WWDzIMIdNvJRt54468bJuw=";
       };
       propagatedBuildInputs = builtins.attrValues {
         inherit (pkgs.rPackages) 

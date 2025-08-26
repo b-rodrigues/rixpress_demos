@@ -16,13 +16,13 @@ list(
   rxp_r(
     name = processed_train,
     expr = pre_process(train_data),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   ),
 
   rxp_r(
     name = processed_test,
     expr = pre_process(test_data),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   ),
 
   rxp_r(
@@ -33,7 +33,7 @@ list(
       insight = 'Train Data Sex Distribution',
       flip = FALSE
     ),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   ),
 
   rxp_r(
@@ -44,7 +44,7 @@ list(
       insight = 'Test Data Pclass Distribution',
       flip = FALSE
     ),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   )
 ) |>
   rxp_populate(build = TRUE)
