@@ -42,15 +42,18 @@ let
     name = "python_example";
      src = defaultPkgs.lib.fileset.toSource {
       root = ./.;
-      fileset = defaultPkgs.lib.fileset.unions [ ./example.txt ./another.txt ];
+      fileset = defaultPkgs.lib.fileset.unions [ ./example.txt ./another.txt ./functions.py ];
     };
     buildInputs = defaultBuildInputs;
     configurePhase = defaultConfigurePhase;
     buildPhase = ''
       cp -r ${./example.txt} example.txt
       cp -r ${./another.txt} another.txt
+      cp ${./functions.py} functions.py
       python -c "
 exec(open('libraries.py').read())
+# RIXPRESS_PY_LOAD_DEPENDENCIES_HERE
+exec(open('functions.py').read())
 exec('python_example = read_first_n_lines_two_files(\'example.txt\', \'another.txt\', 10)')
 with open('python_example', 'wb') as f: pickle.dump(globals()['python_example'], f)
 "
@@ -71,6 +74,7 @@ with open('python_example', 'wb') as f: pickle.dump(globals()['python_example'],
       cp ${./functions.R} functions.R
       Rscript -e "
         source('libraries.R')
+        # RIXPRESS_LOAD_DEPENDENCIES_HERE
         source('functions.R')
         r_example <- read_first_n_lines_two_files('example.txt', 'another.txt', 10)
         saveRDS(r_example, 'r_example')"

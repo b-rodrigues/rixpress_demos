@@ -1,0 +1,22 @@
+{
+  "derivations": [
+    {
+      "deriv_name": ["mtcars"],
+      "depends": [],
+      "unserialize_function": {},
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["filtered_mtcars"],
+      "depends": ["mtcars"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    },
+    {
+      "deriv_name": ["mtcars_mpg"],
+      "depends": ["filtered_mtcars"],
+      "unserialize_function": ["readRDS"],
+      "type": ["rxp_r"]
+    }
+  ]
+}

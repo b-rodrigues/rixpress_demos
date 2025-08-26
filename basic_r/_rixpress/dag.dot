@@ -1,11 +1,15 @@
 /* Created by igraph 0.10.13-126-g31c4e6ffc */
 digraph {
   0 [
-    label=r_example
+    label=mtcars
   ];
   1 [
-    label=r_head
+    label=filtered_mtcars
+  ];
+  2 [
+    label=mtcars_mpg
   ];
 
   0 -> 1;
+  1 -> 2;
 }
