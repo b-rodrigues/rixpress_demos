@@ -84,7 +84,7 @@ let
     buildInputs = py_envBuildInputs;
     configurePhase = py_envConfigurePhase;
     buildPhase = ''
-      cp -r "$src/mtcars.csv" input_file
+      cp $src input_file
 python -c "
 exec(open('libraries.py').read())
 file_path = 'input_file'
