@@ -22,7 +22,7 @@ d2 <- rxp_py2r(
 d3 <- rxp_r(
   name = mtcars_head,
   expr = my_head(mtcars_am),
-  additional_files = "functions.R"
+  user_functions = "functions.R"
 )
 
 d3_1 <- rxp_r2py(
@@ -54,7 +54,7 @@ doc <- rxp_qmd(
 
 rxp_list <- list(d0, d1, d2, d3, d3_1, d4, d4_1, d5, doc)
 
-rxp_populate(rxp_list, project_path = ".")
+rxp_populate(rxp_list, project_path = ".", build = TRUE)
 
 # Plot DAG for CI
 rxp_dag_for_ci()

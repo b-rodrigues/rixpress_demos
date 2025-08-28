@@ -30,7 +30,7 @@ list(
     user_functions = "functions.R"
   )
 ) |>
-  rxp_populate(project_path = ".")
+  rxp_populate(project_path = ".", build = TRUE)
 
 # Plot DAG for CI
 #dag_obj <- plot_dag(return_igraph = TRUE)
