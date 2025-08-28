@@ -4,13 +4,13 @@ list(
   rxp_r(
     name = example_rast,
     expr = get_example_rast(),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   ),
 
   rxp_r(
     name = example_shapefile,
     expr = get_example_shapefile(),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   ),
 
   rxp_r(
@@ -21,13 +21,13 @@ list(
   rxp_r(
     name = example_gadm,
     expr = get_gadm_country(c("Australia", "New Zealand")),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   ),
 
   rxp_r(
     name = example_cgaz_countries,
     expr = cgaz_country("Australia"),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   )
 ) |>
   rxp_populate(project_path = ".")
