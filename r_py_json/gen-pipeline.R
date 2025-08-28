@@ -11,14 +11,14 @@ list(
   rxp_py(
     name = mtcars_pl_am,
     py_expr = "mtcars_pl.filter(polars.col('am') == 1)",
-    additional_files = "functions.py",
+    user_functions = "functions.py",
     serialize_function = "serialize_to_json",
   ),
 
   rxp_r(
     name = mtcars_head,
     expr = my_head(mtcars_pl_am),
-    additional_files = "functions.R",
+    user_functions = "functions.py",
     unserialize_function = "jsonlite::fromJSON"
   ),
 

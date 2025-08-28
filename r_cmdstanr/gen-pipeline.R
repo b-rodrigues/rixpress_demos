@@ -2,9 +2,9 @@ library(rixpress)
 
 list(
   rxp_r_file(
-    bayesian_linear_regression_model,
-    "model.stan",
-    readLines
+    name = bayesian_linear_regression_model,
+    path = "model_file.stan",
+    read_function = readLines
   ),
   rxp_r(
     parameters,
