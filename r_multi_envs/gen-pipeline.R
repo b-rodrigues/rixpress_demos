@@ -25,14 +25,14 @@ d2 <- rxp_py2r(
 d3 <- rxp_r(
   mtcars_head,
   my_head(mtcars_am),
-  additional_files = "functions.R",
+  user_functions = "functions.R",
   nix_env = "default.nix"
 )
 
 d4 <- rxp_r(
   mtcars_tail,
   my_tail(mtcars_head),
-  additional_files = "functions.R",
+  user_functions = "functions.R",
   nix_env = "default.nix"
 )
 

@@ -66,7 +66,7 @@ list(
   rxp_py(
     name = combined_csv,
     py_expr = "combined_df",
-    additional_files = "functions.py",
+    user_functions = "functions.py",
     serialize_function = "write_to_csv"
   ),
 

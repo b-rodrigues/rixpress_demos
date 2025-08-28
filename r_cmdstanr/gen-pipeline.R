@@ -38,12 +38,12 @@ list(
       inputs = inputs,
       seed = 22
     ),
-    additional_files = "functions.R",
+    user_functions = "functions.R",
     serialize_function = "save_model",
     env_var = c("CMDSTAN" = "${defaultPkgs.cmdstan}/opt/cmdstan")
   )
 ) |>
-  rxp_populate(build = FALSE)
+  rxp_populate(build = TRUE)
 
 # Plot DAG for CI
 rxp_dag_for_ci()

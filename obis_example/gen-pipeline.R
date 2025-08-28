@@ -28,7 +28,7 @@ list(
   rxp_r(
     name = species,
     expr = set_species(),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   ),
 
   rxp_r_file(

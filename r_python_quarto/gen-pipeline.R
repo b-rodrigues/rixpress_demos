@@ -23,7 +23,7 @@ list(
   rxp_r(
     name = mtcars_head,
     expr = my_head(mtcars_am),
-    additional_files = "functions.R"
+    user_functions = "functions.R"
   ),
 
   rxp_r2py(
@@ -52,9 +52,7 @@ list(
     additional_files = c("my_doc/content.qmd", "my_doc/images")
   )
 ) |>
-  rxp_populate(project_path = ".")
-
-
+  rxp_populate(project_path = ".", build = TRUE)
 
 # Plot DAG for CI
 rxp_dag_for_ci()

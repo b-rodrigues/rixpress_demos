@@ -33,7 +33,7 @@ d0 <- rxp_py_file(
   name = gorilla_pixels,
   path = 'md_source/gorilla/gorilla-waving-cartoon-black-white-outline-clipart-914.jpg',
   read_function = "read_image",
-  additional_file = "functions/functions.py"
+  user_functions = "functions.py"
 )
 
 ```
@@ -83,7 +83,7 @@ Then we clean them:
 d4 <- rxp_r(
   name = coords,
   expr = clean_coords(raw_coords),
-  additional_files = "functions.R"
+  user_functions = "functions.R"
 )
 ```
 
