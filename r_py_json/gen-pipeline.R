@@ -18,7 +18,7 @@ list(
   rxp_r(
     name = mtcars_head,
     expr = my_head(mtcars_pl_am),
-    user_functions = "functions.py",
+    user_functions = "functions.R",
     unserialize_function = "jsonlite::fromJSON"
   ),
 
