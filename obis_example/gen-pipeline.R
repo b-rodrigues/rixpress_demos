@@ -37,7 +37,8 @@ list(
 
   rxp_r(
     name = turtles,
-    expr = occurrence(species, geometry = atlantic)
+    expr = occurrence(species, geometry = atlantic),
+    noop_build = TRUE
   )
 
   #doc = rxp_qmd(
