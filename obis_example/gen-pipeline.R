@@ -8,7 +8,7 @@ list(
     # even though only path to the shapefile needs to be provided to geopandas.read_file
     # all the other files need to be present
     # we need to provide an anonymous function but with a hardcoded path
-    path = 'data/',
+    path = 'data',
     read_function = "lambda x: geopandas.read_file(data/oceans.shp, driver='ESRI Shapefile')"
   ),
 
