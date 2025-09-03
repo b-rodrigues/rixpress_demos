@@ -4,8 +4,12 @@ library(igraph)
 list(
   rxp_py_file(
     name = gdf,
-    path = 'data/oceans.shp',
-    read_function = "lambda x: geopandas.read_file(x, driver='ESRI Shapefile')"
+    # We need to copy the whole folder to the build sandbox
+    # even though only path to the shapefile needs to be provided to geopandas.read_file
+    # all the other files need to be present
+    # we need to provide an anonymous function but with a hardcoded path
+    path = 'data/',
+    read_function = "lambda x: geopandas.read_file(data/oceans.shp, driver='ESRI Shapefile')"
   ),
 
   rxp_py(
