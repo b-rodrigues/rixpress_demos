@@ -5,11 +5,14 @@ list(
   rxp_py_file(
     name = gdf,
     # We need to copy the whole folder to the build sandbox
-    # even though only path to the shapefile needs to be provided to geopandas.read_file
-    # all the other files need to be present
-    # we need to provide an anonymous function but with a hardcoded path
+    # geopandas.read_file needs the path to the shapefile, but other files are required
+    # to be in the same folder
+    # We thus wrote a function called `read_shp` which is a wrapper around
+    # geopandas.read_file, which takes the path to the data folder as an input
+    # the function then detects the shapefile and passes it to geopandas.read_file
     path = 'data',
-    read_function = "lambda x: geopandas.read_file('input_folder/data/oceans.shp', driver='ESRI Shapefile')"
+    read_function = "read_shp",
+    user_functions = "functions.py"
   ),
 
   rxp_py(
@@ -42,6 +45,9 @@ list(
   rxp_r(
     name = turtles,
     expr = occurrence(species, geometry = atlantic),
+    # The api is down, and thus this derivation does
+    # build. But even if it were up, it couldn't be
+    # accesses from the build sandbox.
     noop_build = TRUE
   )
 
@@ -51,7 +57,14 @@ list(
   #  additional_files = c("my_doc/content.qmd", "my_doc/images")
   #)
 ) |>
-  rxp_populate(project_path = ".")
+  rxp_populate(
+    project_path = ".",
+    py_imports = c(geopandas = "import geopandas as gpd")
+  )
+
+# This is needed for the function defined in functions.py
+add_import("import os", "default.nix")
+add_import("import glob", "default.nix")
 
 # Plot DAG for CI
 rxp_dag_for_ci()
