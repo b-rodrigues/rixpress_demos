@@ -59,9 +59,12 @@ jobs:
       - name: Checkout default.nix
         run: cat default.nix
 
-      - name: Generate and check out pipeline
+      - name: Generate pipeline
         run: |
           nix-shell --quiet --run "Rscript -e 'source(\"gen-pipeline.R\")'"
+          
+      - name: Check out pipeline
+        run: |
           cat pipeline.nix
 
       - name: Check DAG
