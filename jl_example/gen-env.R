@@ -1,7 +1,7 @@
 library(rix)
 
 rix(
-  date = "2025-08-11",
+  date = "2025-09-04",
   r_pkgs = c(
     "arrow",
     "dplyr",
@@ -24,7 +24,7 @@ rix(
     )
   ),
   jl_conf = list(
-    jl_version = "1.11",
+    jl_version = "1.10",
     jl_pkgs = c(
       "Arrow",
       "DataFrames",
