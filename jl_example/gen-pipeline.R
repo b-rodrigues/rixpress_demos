@@ -45,7 +45,7 @@ list(
     qmd_file = "document.qmd",
   )
 ) |>
-  rxp_populate(build = TRUE)
+  rxp_populate(build = FALSE)
 
 rxp_dag_for_ci()
 
