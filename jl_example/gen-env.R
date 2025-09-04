@@ -26,7 +26,10 @@ rix(
   jl_conf = list(
     jl_version = "1.10",
     jl_pkgs = c(
-      "Arrow"
+      "Arrow",
+      "DataFrames",
+      "SparseArrays",
+      "LinearAlgebra"
     )
   ),
   ide = "none",
