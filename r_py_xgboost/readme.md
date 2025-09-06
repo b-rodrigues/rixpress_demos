@@ -47,7 +47,7 @@ span R and Python.
     saving intermediate results, `rixpress` manages data serialization (saving
     data to disk, e.g., Python DataFrame to CSV) and deserialization (loading
     data from disk, e.g., CSV to R data frame). This is controlled by parameters
-    like `read_function`, `serialize_function`, and `unserialize_function`. By
+    like `read_function`, `encoder`, and `decoder`. By
     default, Python object are serialized using `pickle` and R objects using
     `saveRDS()`.
 *   **Python Environment Management:** `rixpress` uses `adjust_import` and

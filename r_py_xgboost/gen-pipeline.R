@@ -67,7 +67,7 @@ list(
     name = combined_csv,
     py_expr = "combined_df",
     user_functions = "functions.py",
-    serialize_function = "write_to_csv"
+    encoder = "write_to_csv"
   ),
 
   # yardstick::conf_mat needs factor variables
@@ -77,7 +77,7 @@ list(
       combined_csv,
       across(.cols = everything(), .fns = factor)
     ),
-    unserialize_function = "read.csv"
+    decoder = "read.csv"
   ),
 
   rxp_r(

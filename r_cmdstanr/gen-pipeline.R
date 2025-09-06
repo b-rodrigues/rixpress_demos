@@ -39,7 +39,7 @@ list(
       seed = 22
     ),
     user_functions = "functions.R",
-    serialize_function = "save_model",
+    encoder = "save_model",
     env_var = c("CMDSTAN" = "${defaultPkgs.cmdstan}/opt/cmdstan")
   )
 ) |>

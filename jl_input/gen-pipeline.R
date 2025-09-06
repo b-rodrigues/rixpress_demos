@@ -6,13 +6,13 @@ list(
     path = "data/mtcars.csv",
     read_function = "read_csv",
     user_functions = "functions.jl",
-    serialize_function = "write_arrow"
+    encoder = "write_arrow"
   ),
 
   rxp_r(
     mtcars2,
     select(mtcars, am, cyl, mpg),
-    unserialize_function = "read_feather"
+    decoder = "read_feather"
   )
 ) |>
   rxp_populate(build = FALSE)
