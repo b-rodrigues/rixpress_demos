@@ -16,7 +16,7 @@ list(
   ),
   rxp_py(
     name = head_mtcars,
-    py_expr = "mtcars_py.head()",
+    expr = "mtcars_py.head()",
     user_functions = "functions.py"
   )
 ) |>

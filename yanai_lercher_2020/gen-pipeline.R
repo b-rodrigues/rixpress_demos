@@ -10,12 +10,12 @@ d0 <- rxp_py_file(
 
 d1 <- rxp_py(
   name = threshold_level,
-  py_expr = "50"
+  expr = "50"
 )
 
 d2 <- rxp_py(
   name = py_coords,
-  py_expr = "numpy.column_stack(numpy.where(gorilla_pixels < threshold_level))",
+  expr = "numpy.column_stack(numpy.where(gorilla_pixels < threshold_level))",
   user_functions = "functions.py"
 )
 

@@ -17,12 +17,12 @@ list(
 
   rxp_py(
     name = sa,
-    py_expr = "gdf.loc[gdf['Oceans'] == 'South Atlantic Ocean']['geometry'].loc[0]"
+    expr = "gdf.loc[gdf['Oceans'] == 'South Atlantic Ocean']['geometry'].loc[0]"
   ),
 
   rxp_py(
     name = atlantic_py,
-    py_expr = "sa.wkt"
+    expr = "sa.wkt"
   ),
 
   rxp_py2r(

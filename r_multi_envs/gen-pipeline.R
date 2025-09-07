@@ -12,7 +12,7 @@ d1 <- rxp_py(
   # reticulate doesn't support polars DFs yet, so need to convert
   # first to pandas DF
   name = mtcars_pl_am,
-  py_expr = "mtcars_pl.filter(polars.col('am') == 1).to_pandas()",
+  expr = "mtcars_pl.filter(polars.col('am') == 1).to_pandas()",
   nix_env = "py-env.nix"
 )
 

@@ -4,7 +4,7 @@ library(igraph)
 list(
   rxp_py(
     name = python_example,
-    py_expr = "read_first_n_lines_two_files('example.txt', 'another.txt', 10)",
+    expr = "read_first_n_lines_two_files('example.txt', 'another.txt', 10)",
     additional_files = c("example.txt", "another.txt"),
     user_functions = "functions.py"
 

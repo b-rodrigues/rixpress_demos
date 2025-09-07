@@ -10,7 +10,7 @@ list(
 
   rxp_py(
     name = mtcars_pl_am,
-    py_expr = "mtcars_pl.filter(polars.col('am') == 1)",
+    expr = "mtcars_pl.filter(polars.col('am') == 1)",
     user_functions = "functions.py",
     encoder = "serialize_to_json",
   ),

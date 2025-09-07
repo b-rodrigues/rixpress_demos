@@ -12,7 +12,7 @@ list(
     # reticulate doesn't support polars DFs yet, so need to convert
     # first to pandas DF
     name = mtcars_pl_am,
-    py_expr = "mtcars_pl.filter(polars.col('am') == 1).to_pandas()"
+    expr = "mtcars_pl.filter(polars.col('am') == 1).to_pandas()"
   ),
 
   rxp_py2r(
@@ -33,7 +33,7 @@ list(
 
   rxp_py(
     name = mtcars_tail_py,
-    py_expr = 'mtcars_head_py.tail()'
+    expr = 'mtcars_head_py.tail()'
   ),
 
   rxp_py2r(
