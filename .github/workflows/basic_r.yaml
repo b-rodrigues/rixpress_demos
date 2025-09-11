@@ -67,13 +67,13 @@ jobs:
           nix-shell --quiet --run "Rscript -e 'rixpress::rxp_gc(keep_since = \"2050-12-31\", dry_run = FALSE)'"
 
       - name: Build pipeline using Python
-        run: nix-shell --quiet --run 'python -c "from ryxpress import rxp_make; rxp_make()"'
+        run: nix-shell --run 'python -c "from ryxpress import rxp_make; rxp_make()"'
 
       - name: Inspect built derivations using Python
-        run: nix-shell --quiet --run 'python -c "from ryxpress import rxp_inspect; rxp_inspect()"'
+        run: nix-shell --run 'python -c "from ryxpress import rxp_inspect; rxp_inspect()"'
 
       - name: Load derivation using Python
-        run: nix-shell --quiet --run 'python -c "from rds2py import read_rds; from ryxpress import rxp_read; rxp_read(\'mtcars_mpg\')"'
+        run: nix-shell --run "python -c 'from rds2py import read_rds; from ryxpress import rxp_read; rxp_read(\"mtcars_mpg\")'"
 
       - name: Garbage collect using Python
-        run: nix-shell --quiet --run 'python -c "from ryxpress import rxp_gc; rxp_gc(keep_since = \'2050-12-31\', dry_run = FALSE)"'
+        run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = FALSE)'"
