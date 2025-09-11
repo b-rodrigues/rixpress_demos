@@ -76,4 +76,4 @@ jobs:
         run: nix-shell --run "python -c 'from rds2py import read_rds; from ryxpress import rxp_read; rxp_read(\"mtcars_mpg\")'"
 
       - name: Garbage collect using Python
-        run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = FALSE)'"
+        run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = False)'"
