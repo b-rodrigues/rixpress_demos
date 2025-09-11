@@ -73,7 +73,7 @@ jobs:
         run: nix-shell --run 'python -c "from ryxpress import rxp_inspect; rxp_inspect()"'
 
       - name: Load derivation using Python
-        run: nix-shell --run "python -c 'from rds2py import read_rds; from ryxpress import rxp_read; mtcars_mpg_bframe = rxp_read(\"mtcars_mpg\"); print(mtcars_mpg_bframe.to_pandas)'"
+        run: nix-shell --run "python -c 'from rds2py import read_rds; from ryxpress import rxp_read; mtcars_mpg_bframe = rxp_read(\"mtcars_mpg\"); print(mtcars_mpg_bframe.to_pandas())'"
 
       - name: Garbage collect using Python
         run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = False)'"
