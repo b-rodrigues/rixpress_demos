@@ -37,7 +37,7 @@ rix(
     ),
     list(
       package_name = "rixpress",
-      repo_url = "https://github.com/b-rodrigues/rixpress",
+      repo_url = "https://github.com/ropensci/rixpress",
       commit = "HEAD"
     )
   ),
@@ -60,7 +60,7 @@ rix(
     ),
     list(
       package_name = "rixpress",
-      repo_url = "https://github.com/b-rodrigues/rixpress",
+      repo_url = "https://github.com/ropensci/rixpress",
       commit = "HEAD"
     )
   ),
