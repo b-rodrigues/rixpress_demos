@@ -11,7 +11,7 @@ rix(
     ),
     list(
       package_name = "rixpress",
-      repo_url = "https://github.com/ropensi/rixpress",
+      repo_url = "https://github.com/ropensci/rixpress",
       commit = "HEAD"
     )
   ),
