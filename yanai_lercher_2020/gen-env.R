@@ -16,8 +16,8 @@ rix(
     )
   ),
   py_conf = list(
-    py_version = "3.12",
-    py_pkgs = c("numpy", "pillow")
+    py_version = "3.13",
+    py_pkgs = c("ryxpress")
   ),
   ide = "none",
   project_path = ".",

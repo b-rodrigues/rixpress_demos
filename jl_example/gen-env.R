@@ -23,6 +23,10 @@ rix(
       commit = "HEAD"
     )
   ),
+  py_conf = list(
+    py_version = "3.13",
+    py_pkgs = c("ryxpress")
+  ),
   jl_conf = list(
     jl_version = "1.10",
     jl_pkgs = c(
