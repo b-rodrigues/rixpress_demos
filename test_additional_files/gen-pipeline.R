@@ -6,15 +6,14 @@ list(
     name = python_example,
     expr = "read_first_n_lines_two_files('example.txt', 'another.txt', 10)",
     additional_files = c("example.txt", "another.txt"),
-    user_functions = "functions.py"
-
+    user_functions = "functions/functions.py"
   ),
 
   rxp_r(
     name = r_example,
     expr = read_first_n_lines_two_files('example.txt', 'another.txt', 10),
     additional_files = c("example.txt", "another.txt"),
-    user_functions = "functions.R"
+    user_functions = "functions/functions.R"
   ),
 
   rxp_r(

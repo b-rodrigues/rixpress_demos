@@ -22,7 +22,7 @@ d2 <- rxp_py2r(
 d3 <- rxp_r(
   name = mtcars_head,
   expr = my_head(mtcars_am),
-  user_functions = "functions.R"
+  user_functions = "functions/functions.R"
 )
 
 d3_1 <- rxp_r2py(
