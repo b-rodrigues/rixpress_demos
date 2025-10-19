@@ -68,3 +68,6 @@ list(
     build = TRUE, # Set to TRUE to execute the pipeline immediately
     verbose = 0
   )
+
+# Plot DAG for CI
+rxp_dag_for_ci()
