@@ -97,9 +97,6 @@ jobs:
       - name: Load derivation using Python
         run: nix-shell --run "python -c 'from ryxpress import rxp_copy; rxp_copy(\"final_report\")'"
 
-      - name: Garbage collect using Python
-        run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = False, force = True)'"
-
       - name: Push docs
         run: |
           cd ..
