@@ -79,7 +79,7 @@ jobs:
         run: |
           rm ../docs/rbc/index.html
           cp -r pipeline-output/* ../docs/rbc
-          mv ../docs/rbc/final_report.html ../docs/rbc/index.html
+          mv ../docs/rbc/readme.html ../docs/rbc/index.html
 
       - name: Garbage collect
         run: |
