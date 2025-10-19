@@ -1,0 +1,113 @@
+name: rbc demo
+
+on:
+  repository_dispatch:
+    types: [trigger-demo]
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+permissions: write-all
+
+jobs:
+  rbc:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    defaults:
+      run:
+        working-directory: ./rbc
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create this folder to silence warning
+        run: mkdir -p ~/.nix-defexpr/channels
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=https://github.com/rstats-on-nix/nixpkgs/archive/r-daily.tar.gz
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: rstats-on-nix
+
+      - name: Build dev env
+        run: |
+          nix-shell --expr "$(curl -sl https://raw.githubusercontent.com/ropensci/rix/main/inst/extdata/default.nix)" --run "Rscript -e 'source(\"gen-env.R\")'"
+
+      - name: Checkout default.nix
+        run: cat default.nix
+
+      - name: Generate and check out pipeline
+        run: |
+          nix-shell --quiet --run "Rscript -e 'source(\"gen-pipeline.R\")'"
+          cat pipeline.nix
+
+      - name: Check DAG
+        run: |
+          nix-shell --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot _rixpress/dag.dot"
+
+      - name: Build pipeline
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_make(verbose = 1)'"
+
+      - name: Inspect built derivations
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
+
+      - name: Put generated HTML in workdir
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_copy(\"final_report\")'"
+
+      - name: Export outputs to avoid rebuild
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_export_artifacts(archive_file = \"pipeline_outputs.nar\")'"
+
+      - name: Set git config
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Copy output `page` to docs/rbc
+        run: |
+          rm ../docs/rbc/index.html
+          cp -r pipeline-output/* ../docs/rbc
+          mv ../docs/rbc/final_report.html ../docs/rbc/index.html
+
+      - name: Garbage collect
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_gc(keep_since = \"2050-12-31\", dry_run = FALSE, ask = FALSE)'"
+
+      - name: Build pipeline using Python
+        run: nix-shell --run 'python -c "from ryxpress import rxp_make; rxp_make()"'
+
+      - name: Inspect built derivations using Python
+        run: nix-shell --run 'python -c "from ryxpress import rxp_inspect; a = rxp_inspect(); print(a)"'
+
+      - name: View lineage using Python
+        run: nix-shell --run 'python -c "from ryxpress import rxp_trace; rxp_trace(\"final_report\")"'
+
+      - name: Load derivation using Python
+        run: nix-shell --run "python -c 'from ryxpress import rxp_copy; rxp_copy(\"final_report\")'"
+
+      - name: Garbage collect using Python
+        run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = False, force = True)'"
+
+      - name: Push docs
+        run: |
+          cd ..
+          git pull --rebase --autostash origin master
+          git add docs/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "updated output of rbc pipeline"
+            git push origin master
+          fi

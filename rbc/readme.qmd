@@ -1,0 +1,570 @@
+---
+title: "A Polyglot Data Science Pipeline with rixpress"
+format:
+  html:
+    embed-resources: true
+    toc: true
+---
+
+
+```{r, include = FALSE}
+library(rixpress)
+```
+
+## Introduction: Showcasing Reproducible Pipelines
+
+This document demonstrates the power of the `{rixpress}` R package to build,
+orchestrate, and execute a fully reproducible, polyglot data science pipeline.
+The primary goal is to showcase `{rixpress}`'s capabilities, not to conduct a
+deep economic analysis.
+
+To provide a compelling example, our pipeline will perform a task common in
+modern quantitative research:
+
+1.  **Simulate** synthetic economic data using a macroeconomic model in **Julia**.
+2.  **Train** a machine learning model on this data to make forecasts in **Python**.
+3.  **Visualize** the model's performance in **R**.
+
+I want to insist that this is merely a toy example project to illustrate the
+functionality of `{rixpress}`. It likely would have been possible to write the
+whole project in only one language.
+
+The code and this text where written with the assistance of LLMs.
+
+### The Economic Model: A Means to an End
+
+We will use a foundational model from modern macroeconomics—the **Real Business
+Cycle (RBC) model**—to generate our data. The theory and log-linearized
+equations used in our Julia script are taken directly from the excellent lecture
+slides by Bianca De Paoli.
+
+::: {.callout-note}
+### Source Attribution
+
+The economic theory and equations for the RBC model are based on the following
+source. This document serves as a guide for our implementation.
+
+**Source:** De Paoli, B. (2009). *Slides 1: The RBC Model, Analytical and
+Numerical solutions*.
+[https://personal.lse.ac.uk/depaoli/RBC_slides1.pdf](https://personal.lse.ac.uk/depaoli/RBC_slides1.pdf)
+:::
+
+For reference, the key log-linearized equations of the RBC model from the slides
+are:
+
+$$
+\begin{align*}
+\sigma E_t[\hat{c}_{t+1} - \hat{c}_t] &= E_t[\hat{r}^k_{t+1}] \quad &\text{(Euler Equation)} \\
+\hat{r}^k_t &= \alpha \beta y_k (\hat{z}_t - (1-\alpha)\hat{k}_{t-1}) \quad &\text{(Return on Capital)} \\
+y_k(\hat{z}_t + \alpha \hat{k}_{t-1}) &= (y_k - \delta)\hat{c}_t + \hat{k}_t - (1-\delta)\hat{k}_{t-1} \quad &\text{(Resource Constraint)} \\
+\hat{y}_t &= \hat{z}_t + \alpha\hat{k}_{t-1} \quad &\text{(Production Function)}
+\end{align*}
+$$
+
+Our Julia script implements the state-space solution to this system.
+
+## The Pipeline Components
+
+Our project consists of a set of scripts, each with a dedicated purpose, all
+orchestrated by `{rixpress}`.
+
+### 1. The Environment (`gen-env.R`)
+
+Reproducibility starts with the environment. We use the `{rix}` package to
+declaratively define a `default.nix` file. This file locks down the exact
+versions of R, Julia, Python, and all their respective packages, ensuring the
+pipeline runs identically today, tomorrow, or on any machine with Nix installed.
+
+```r
+#| eval: false
+#| code-summary: "Environment Definition with {rix}"
+s
+# This script defines the polyglot environment our pipeline will run in.
+library(rix)
+
+# Define the complete execution environment
+rix(
+  # Pin the environment to a specific date to ensure that all package
+  # versions are resolved as they were on this day.
+  date = "2025-10-14",
+
+  # 1. R Packages
+  # We need packages for plotting, data manipulation, and reading arrow files.
+  r_pkgs = c(
+    "ggplot2",
+    "dplyr",
+    "arrow",
+    "rix",
+    "rixpress"
+  ),
+
+  # 2. Julia Configuration
+  # We specify the Julia version and the list of packages needed
+  # for our manual RBC model simulation.
+  jl_conf = list(
+    jl_version = "lts",
+    jl_pkgs = c(
+      "Distributions", # For creating random shocks
+      "DataFrames", # For structuring the output
+      "Arrow", # For saving the data in a cross-language format
+      "Random"
+    )
+  ),
+
+  # 3. Python Configuration
+  # We specify the Python version and the packages needed for the
+  # machine learning step.
+  py_conf = list(
+    py_version = "3.13",
+    py_pkgs = c(
+      "pandas",
+      "scikit-learn",
+      "xgboost",
+      "pyarrow"
+    )
+  ),
+
+  # We set the IDE to 'none' for a minimal environment. You could change
+  # this to "rstudio" if you prefer to work interactively in RStudio.
+  ide = "none",
+
+  # Define the project path and allow overwriting the default.nix file.
+  project_path = ".",
+  overwrite = TRUE
+)
+
+# A message to confirm the script has run successfully.
+message("Successfully generated 'default.nix' environment file.")
+
+
+```
+
+### 2. The Simulation (`functions.jl`)
+
+This Julia script contains a pure function that simulates the RBC model and
+returns a DataFrame. The code is a direct implementation of the state-space
+solution derived from the equations above and is saved under
+`functions/functions.jl`.
+
+```julia
+#| eval: false
+#| code-summary: "Julia: RBC Model Simulation"
+
+# This script contains the helper functions for the Julia portion of the pipeline.
+# It implements the correct, stable, and canonical log-linearized solution to
+# a standard Real Business Cycle (RBC) model, based on the provided lecture slides.
+
+#using LinearAlgebra, Distributions, DataFrames, Arrow, Random
+
+#-------------------------------------------------------------------------------
+# 1. Main Simulation Function (Corrected and Stable)
+#-------------------------------------------------------------------------------
+
+"""
+    simulate_rbc_model(α, β, δ, ρ, σ, σ_z)
+
+    Takes RBC model parameters as input, solves for the state-space representation
+    using the method of undetermined coefficients (as per the slides), simulates
+    the STABLE model for 250 quarters, and returns a DataFrame.
+"""
+function simulate_rbc_model(α, β, δ, ρ, σ, σ_z)
+
+    # --- STEADY-STATE VALUES AND CONSTRUCTED PARAMETERS (Slides p. 16, 31) ---
+    y_k = ((1/β) - 1 + δ) / α
+
+    # --- SOLVE FOR POLICY FUNCTION COEFFICIENTS (Slides p. 19-22) ---
+    # We solve for the coefficients of the policy functions:
+    # c_hat_t = c_ck * k_hat_{t-1} + c_cz * z_hat_t
+    # k_hat_t = c_kk * k_hat_{t-1} + c_kz * z_hat_t
+
+    # Solve the quadratic equation for c_ck (coefficient of capital on consumption)
+    # Based on Campbell (1994) and slide 22, we take the stable root.
+    # a*x^2 + b*x + c = 0
+    a_quad = y_k - δ
+    b_quad = -( (1-β*(1-δ))*(y_k - δ) + y_k*(1+α) + 1 )
+    c_quad = y_k * α
+
+    # The stable solution is the smaller positive root
+    c_ck = (-b_quad - sqrt(b_quad^2 - 4*a_quad*c_quad)) / (2*a_quad)
+
+    # Now solve for the other coefficients based on c_ck
+    c_kk = (y_k * α) / (y_k - δ - c_ck)
+    c_cz = (y_k * (1 - c_kk * (1 - α) * β * ρ)) /
+           ( (y_k - δ - c_ck) * (1 - β * ρ) + σ * (1 - c_ck) * (1 - β * ρ) )
+    c_kz = (c_cz * (1 - c_ck)) / (y_k * (1 - α))
+
+    # --- BUILD STATE-SPACE MATRICES FROM SOLVED COEFFICIENTS ---
+    # State vector: s_t = [k_{t-1}, z_t]'
+    # Transition:   s_t = T*s_{t-1} + R*ε_t
+
+    T = [c_kk  c_kz * ρ
+         0     ρ      ]
+
+    R = [c_kz ; 1]
+
+    # Observation Matrix for [output, consumption, investment]
+    # y_hat_t = α*k_{t-1} + z_t
+    # c_hat_t = c_ck*k_{t-1} + c_cz*z_t
+    # i_hat_t = (i_y_ss)^-1 * (k_t - (1-δ)k_{t-1})
+    #         = (i_y_ss)^-1 * ( (c_kk - (1-δ))k_{t-1} + c_kz*z_t )
+
+    i_y_ss = δ * (α / ((1/β) - 1 + δ))
+
+    C = [α      1
+         c_ck   c_cz
+         (c_kk - (1-δ))/i_y_ss   c_kz/i_y_ss]
+
+    # --- SIMULATE THE MODEL ---
+    Random.seed!(1234)
+    n_periods = 250
+    shocks = randn(n_periods) * σ_z
+
+    states = zeros(2, n_periods)
+    for t in 2:n_periods
+        # The state is [k_{t-1}, z_t]'
+        # To get the next state [k_t, z_{t+1}]', we first find k_t
+        k_t = T[1,1]*states[1, t] + T[1,2]*states[2, t] + R[1]*shocks[t]
+        z_tp1 = T[2,1]*states[1, t] + T[2,2]*states[2, t] + R[2]*shocks[t]
+
+        states[1, t] = k_t # This is now k_t, which is "k_lag" for t+1
+        states[2, t] = z_tp1 # This is now z_{t+1}
+    end
+    # Re-aligning states to be [k_{t-1}, z_t]
+    k_lag = [0; states[1, 1:end-1]]
+    z = [0; states[2, 1:end-1]]
+
+    observables = C * [k_lag'; z']
+
+    df = DataFrame(
+        period = 1:n_periods,
+        output = observables[1, :],
+        consumption = observables[2, :],
+        investment = observables[3, :],
+        capital = k_lag,
+        technology = z
+    )
+
+    return df
+end
+
+#-------------------------------------------------------------------------------
+# 2. Encoder Function (Unchanged)
+#-------------------------------------------------------------------------------
+"""
+    arrow_write(df::DataFrame, path::String)
+    Encoder function to save a Julia DataFrame to an Arrow file.
+"""
+function arrow_write(df::DataFrame, path::String)
+    Arrow.write(path, df)
+end
+
+```
+
+At the end of the script, we create a wrapper around `Arrow.write()` called
+`arrow_write()` to serialize the generated data frame into an Arrow file.
+
+The generated data frame looks like:
+
+```{r}
+# This is an Arrow data file, so rxp_read(),
+# not knowing how to read it, will simply return
+# the path to the file in the Nix store.
+# We can pass this file to the adequate reader.
+rxp_read("simulated_rbc_data") |>
+  arrow::read_feather() |>
+  head()
+```
+
+### 3. The Prediction Model (`functions.py`)
+
+This Python script defines a function to perform our machine learning task. It
+takes the DataFrame from the Julia step, trains an XGBoost model to predict
+next-quarter's output, and returns a new DataFrame containing the predictions.
+Of course, we could have simply used the RBC model itself for the predictions, but
+again, this is a toy example. Also, using something like an ARIMA model would
+likely make more sense, but again, don't focus too much on the "insides" of the
+code.
+
+```python
+#| eval: false
+#| code-summary: "Python: XGBoost Forecasting"
+
+# This script contains the helper functions for the Python portion of the pipeline.
+# It defines the ML model training and prediction logic.
+
+# 1. Load required Python packages
+# This is only needed if you run this script by hand,
+# in which case, uncomment lines 8 to 11.
+# With rixpress, the packages get loaded automatically.
+
+#import pandas as pd
+#import pyarrow.feather as feather
+#from sklearn.model_selection import train_test_split
+#import xgboost as xgb
+
+
+"""
+train_and_predict_output(simulated_df: pd.DataFrame) -> pd.DataFrame:
+    Takes a pandas DataFrame of simulated RBC data, trains an XGBoost model
+    to predict the next period's output, and returns a DataFrame containing
+    the actual vs. predicted values for the test set.
+"""
+def train_and_predict_output(simulated_df: pd.DataFrame) -> pd.DataFrame:
+    df = simulated_df.copy()
+
+    # Create lagged features (using t-1 to predict t)
+    df['output_lag1'] = df['output'].shift(1)
+    df['consumption_lag1'] = df['consumption'].shift(1)
+    df['investment_lag1'] = df['investment'].shift(1)
+    df['capital_lag1'] = df['capital'].shift(1)
+    df['technology_lag1'] = df['technology'].shift(1)
+
+    # Target: next period's output
+    df['output_target'] = df['output'].shift(-1)
+
+    # Drop rows with NaN (first and last rows)
+    df.dropna(inplace=True)
+
+    features = ['output_lag1', 'consumption_lag1', 'investment_lag1', 
+                'capital_lag1', 'technology_lag1']
+
+    X = df[features]
+    y = df['output_target']
+
+    # Time-series split (no shuffling!)
+    train_size = int(0.75 * len(df))
+    X_train, X_test = X[:train_size], X[train_size:]
+    y_train, y_test = y[:train_size], y[train_size:]
+
+    model = xgb.XGBRegressor(
+        objective='reg:squarederror',
+        n_estimators=100,
+        learning_rate=0.1,
+        max_depth=3,
+        random_state=42
+    )
+
+    model.fit(X_train, y_train)
+    predictions = model.predict(X_test)
+
+    results_df = pd.DataFrame({
+        'period': y_test.index,
+        'actual_output': y_test.values,
+        'predicted_output': predictions
+    })
+
+    return results_df
+
+"""
+save_arrow(df: pd.DataFrame, path: str)
+    Encoder function to save a pandas DataFrame to an Arrow file.
+"""
+def save_arrow(df: pd.DataFrame, path: str):
+    feather.write_feather(df, path)
+
+```
+
+Just as for the Julia script, I write a wrapper around `feather.write_feather()`
+to serialize the data into an Arrow file and pass it finally to R.
+
+### 4. The Visualization (`functions.R`)
+
+Finally, this R script contains a function that takes the predictions from the
+Python step and creates a publication-quality visualization using `{ggplot2}`.
+
+```r
+#| eval: false
+#| code-summary: "R: ggplot2 Visualization"
+
+# This script contains the helper functions for the R portion of the pipeline.
+# It defines the visualization logic using ggplot2.
+
+# 1. Load required R packages
+# This is only needed if you run this script by hand,
+# in which case, uncomment lines 8 and 9.
+# With rixpress, the packages get loaded automatically.
+
+#library(ggplot2)
+#library(dplyr)
+
+#-------------------------------------------------------------------------------
+# 2. Main Function: Create the Visualization
+#-------------------------------------------------------------------------------
+
+#' Create a plot comparing actual vs. predicted output
+#'
+#' This function takes a data frame with actual and predicted time series data
+#' and generates a ggplot visualization.
+#'
+#' @param predictions_df A data frame containing columns: 'period',
+#'   'actual_output', and 'predicted_output'. This data frame will be the
+#'   output of the Python XGBoost step.
+#' @return A ggplot object.
+#'
+plot_predictions <- function(predictions_df) {
+  # Create the plot object
+  p <- ggplot(predictions_df, aes(x = period)) +
+
+    # Add a line for the actual output from the RBC model simulation
+    geom_line(
+      aes(y = actual_output, color = "Actual (RBC Model)"),
+      linewidth = 1
+    ) +
+
+    # Add a dashed line for the XGBoost model's predictions
+    geom_line(
+      aes(y = predicted_output, color = "Predicted (XGBoost)"),
+      linetype = "dashed",
+      linewidth = 1
+    ) +
+
+    # Define custom colors and legend labels
+    scale_color_manual(
+      name = "Series",
+      values = c("Actual (RBC Model)" = "blue", "Predicted (XGBoost)" = "red")
+    ) +
+
+    # Add informative labels and a title
+    labs(
+      title = "XGBoost Prediction of RBC Model Output",
+      subtitle = "Forecasting next-quarter output based on current-quarter economic variables",
+      x = "Time (Quarters)",
+      y = "Output (Log-deviations from steady state)"
+    ) +
+
+    # Use a clean theme
+    theme_minimal() +
+
+    # Improve legend position
+    theme(legend.position = "bottom")
+
+  # Return the final ggplot object
+  return(p)
+}
+
+```
+
+This simply returns the following plot:
+
+```{r}
+rxp_read("output_plot")
+```
+
+## Orchestration with `{rixpress}`
+
+The `gen-pipeline.R` script is the "conductor" of our orchestra. It uses
+`{rixpress}`'s intuitive, R-based syntax to define the dependencies and data
+flow between our multi-language components.
+
+Notice how the output of one step becomes the input to the next, and how
+`{rixpress}` uses `encoder` and `decoder` arguments to seamlessly handle the
+serialization (saving to disk) and deserialization (reading from disk) of data
+between languages using the wrappers we wrote.
+
+```r
+#| eval: false
+#| code-summary: "The {rixpress} Pipeline Definition"
+
+# This script defines and orchestrates the entire reproducible analytical pipeline
+# using the {rixpress} package.
+
+library(rixpress)
+
+# Define the full pipeline as a list of derivations and pipe it to rxp_populate()
+# to generate the Nix build instructions and execute the pipeline.
+
+list(
+  # STEP 0: Define RBC Model Parameters as Derivations
+  # This makes the parameters an explicit part of the pipeline.
+  # Changing a parameter will cause downstream steps to rebuild.
+  rxp_jl(alpha, 0.3), # Capital's share of income
+  rxp_jl(beta, 1 / 1.01), # Discount factor
+  rxp_jl(delta, 0.025), # Depreciation rate
+  rxp_jl(rho, 0.95), # Technology shock persistence
+  rxp_jl(sigma, 1.0), # Risk aversion (log-utility)
+  rxp_jl(sigma_z, 0.01), # Technology shock standard deviation
+
+  # STEP 1: Julia - Simulate a Real Business Cycle (RBC) model.
+  # This derivation runs our Julia script to generate the source data.
+  rxp_jl(
+    name = simulated_rbc_data,
+    expr = "simulate_rbc_model(alpha, beta, delta, rho, sigma, sigma_z)",
+    user_functions = "functions/functions.jl", # The file containing the function
+    encoder = "arrow_write" # The function to use for saving the output
+  ),
+
+  # STEP 2: Python - Train an XGBoost model on the simulated data.
+  # This derivation depends on the output of the Julia step.
+  rxp_py(
+    name = predictions,
+    # The expression is now a clean function call. {rixpress} handles
+    # passing the `simulated_rbc_data` DataFrame as the argument.
+    expr = "train_and_predict_output(simulated_rbc_data)",
+    user_functions = "functions/functions.py",
+    # The decoder is still needed to convert the .arrow file from Julia
+    # into the pandas DataFrame that our function expects.
+    decoder = "feather.read_feather",
+    # The encoder is still needed to take the DataFrame returned by our
+    # function and save it to a .arrow file for the next step.
+    encoder = "save_arrow"
+  ),
+
+  # STEP 3: R - Visualize the predictions from the Python model.
+  # This final derivation depends on the output of the Python step.
+  rxp_r(
+    name = output_plot,
+    expr = plot_predictions(predictions), # The function to call from functions.R
+    user_functions = "functions/functions.R",
+    # Specify how to load the upstream data (from Python) into R.
+    decoder = arrow::read_ipc_file
+  ),
+
+  # STEP 4: Quarto - Compile the final report, this is what you're
+  # currently reading.
+  rxp_qmd(
+    name = final_report,
+    qmd_file = "readme.qmd"
+  )
+) |>
+  rxp_populate(
+    # rxp_populate generates the Nix expression of the pipeline.
+    # I adjust the Python imports...
+    py_imports = c(
+      pandas = "import pandas as pd",
+      pyarrow = "import pyarrow.feather as feather",
+      sklearn = "from sklearn.model_selection import train_test_split",
+      xgboost = "import xgboost as xgb"
+    ),
+    project_path = ".", # The root of our project
+    build = TRUE, # Set to TRUE to build the pipeline when sourcing this script.
+    verbose = 1 # Setting to '1' is useful for debugging.
+  )
+
+
+```
+
+## The Final Result
+
+After running the entire pipeline, the final artifact is a `{ggplot2}` object
+named `output_plot`, which is saved in the Nix store. We can load and display it
+directly in this document using the `rixpress::rxp_read()` function.
+
+## Conclusion
+
+This project successfully demonstrates how `{rixpress}` leverages the Nix
+package manager to create a robust, end-to-end reproducible pipeline that
+seamlessly integrates Julia, Python, and R. By defining each component as a pure
+function and orchestrating the data flow with `{rixpress}`, we ensure that the
+entire workflow—from the environment to the final plot—can be reproduced
+perfectly on any machine.
+
+---
+::: {.callout-tip}
+### How to Render This Document
+
+To render this Quarto file and display the plot, you must first run the entire
+pipeline as described in the previous steps. Then, from your terminal, execute
+the following command:
+
+`nix-shell --run "quarto render index.qmd"`
+:::
