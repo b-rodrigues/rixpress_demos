@@ -5,7 +5,7 @@
 #using LinearAlgebra, Distributions, DataFrames, Arrow, Random
 
 #-------------------------------------------------------------------------------
-# 1. Main Simulation Function (Corrected and Stable)
+# 1. Main Simulation Function
 #-------------------------------------------------------------------------------
 
 """
@@ -13,7 +13,7 @@
 
     Takes RBC model parameters as input, solves for the state-space representation
     using the method of undetermined coefficients (as per the slides), simulates
-    the STABLE model for 250 quarters, and returns a DataFrame.
+    the model for 250 quarters, and returns a DataFrame.
 """
 function simulate_rbc_model(α, β, δ, ρ, σ, σ_z)
 
