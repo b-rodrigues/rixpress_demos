@@ -607,10 +607,18 @@ which will use the environment as defined in the `default.nix` and run `source("
 If there are issues, setting the `verbose` argument of `rxp_populate()` to `1` is helpful
 to see the full error logs.
 
-In an interactive session, one can use `rxp_read()`, `rxp_load()` to read or load
-artifacts into the R session respectively and `rxp_trace()` to check the lineage of 
-an artifact. The pipeline could also be built from a Python session, using `ryxpress`,
-the Python port of `{rixpress}`.
+Calling `rxp_ggdag()` shows the following plot:
+
+```{r}
+rxp_ggdag()
+```
+
+
+
+In an interactive session, one can use `rxp_read()`, `rxp_load()` to read or
+load artifacts into the R session respectively and `rxp_trace()` to check the
+lineage of an artifact. The pipeline could also be built from a Python session,
+using `ryxpress`, the Python port of `{rixpress}`.
 
 ## The Final Result
 

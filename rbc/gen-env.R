@@ -15,6 +15,7 @@ rix(
   # We also include reticulate as it can be useful for rixpress internals.
   r_pkgs = c(
     "ggplot2",
+    "ggdag",
     "dplyr",
     "arrow",
     "rix",

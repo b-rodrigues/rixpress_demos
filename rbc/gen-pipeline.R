@@ -25,7 +25,7 @@ list(
     encoder = "arrow_write" # The function to use for saving the output
   ),
 
- # STEP 2.1: Python - Prepare features (lagging data)
+  # STEP 2.1: Python - Prepare features (lagging data)
   rxp_py(
     name = processed_data,
     expr = "prepare_features(simulated_rbc_data)",
@@ -98,6 +98,7 @@ list(
   # STEP 4: Quarto - Compile the final report.
   rxp_qmd(
     name = final_report,
+    additional_files = "_rixpress",
     qmd_file = "readme.qmd"
   )
 ) |>
@@ -110,7 +111,7 @@ list(
     ),
     project_path = ".", # The root of our project
     build = TRUE, # Set to TRUE to execute the pipeline immediately
-    verbose = 0
+    verbose = 1
   )
 
 # Plot DAG for CI
