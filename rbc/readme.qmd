@@ -11,6 +11,8 @@ format:
 library(rixpress)
 ```
 
+*Disclaimer: The code and this text were written with the assistance of LLMs.*
+
 ## Introduction: Showcasing Reproducible Pipelines
 
 This document demonstrates the power of the `{rixpress}` R package to build,
@@ -26,10 +28,8 @@ modern quantitative research:
 3.  **Visualize** the model's performance in **R**.
 
 I want to insist that this is merely a toy example project to illustrate the
-functionality of `{rixpress}`. It likely would have been possible to write the
-whole project in only one language.
-
-The code and this text where written with the assistance of LLMs.
+functionality of `{rixpress}`. I make no claims as to the accuracy of the LLM-generated
+code for model simulation.
 
 ### The Economic Model: A Means to an End
 
@@ -48,18 +48,6 @@ source. This document serves as a guide for our implementation.
 Numerical solutions*.
 [https://personal.lse.ac.uk/depaoli/RBC_slides1.pdf](https://personal.lse.ac.uk/depaoli/RBC_slides1.pdf)
 :::
-
-For reference, the key log-linearized equations of the RBC model from the slides
-are:
-
-$$
-\begin{align*}
-\sigma E_t[\hat{c}_{t+1} - \hat{c}_t] &= E_t[\hat{r}^k_{t+1}] \quad &\text{(Euler Equation)} \\
-\hat{r}^k_t &= \alpha \beta y_k (\hat{z}_t - (1-\alpha)\hat{k}_{t-1}) \quad &\text{(Return on Capital)} \\
-y_k(\hat{z}_t + \alpha \hat{k}_{t-1}) &= (y_k - \delta)\hat{c}_t + \hat{k}_t - (1-\delta)\hat{k}_{t-1} \quad &\text{(Resource Constraint)} \\
-\hat{y}_t &= \hat{z}_t + \alpha\hat{k}_{t-1} \quad &\text{(Production Function)}
-\end{align*}
-$$
 
 Our Julia script implements the state-space solution to this system.
 
@@ -134,6 +122,18 @@ rix(
 )
 
 ```
+
+Assuming we are working on a system that has Nix installed, we can "drop" into
+a temporary Nix shell with R and `{rix}` available:
+
+```r
+nix-shell --expr "$(curl -sl https://raw.githubusercontent.com/ropensci/rix/main/inst/extdata/default.nix)"
+```
+
+Once the shell is ready, start R (by simply typing `R`) and run `source("gen-env.R")`
+to generate the adequate `default.nix` file. This is the environment that we can use
+to work interactively with the code while developing, and in which the pipeline will
+be executed.
 
 ### 2. The Simulation (`functions.jl`)
 
@@ -259,7 +259,8 @@ end
 At the end of the script, we create a wrapper around `Arrow.write()` called
 `arrow_write()` to serialize the generated data frame into an Arrow file.
 
-The generated data frame looks like:
+While developing, it is possible to start the Julia interpreter and test things
+and see if they work. The generated data frame looks like:
 
 ```{r}
 # This is an Arrow data file, so rxp_read(),
@@ -277,9 +278,7 @@ This Python script defines a function to perform our machine learning task. It
 takes the DataFrame from the Julia step, trains an XGBoost model to predict
 next-quarter's output, and returns a new DataFrame containing the predictions.
 Of course, we could have simply used the RBC model itself for the predictions,
-but again, this is a toy example. Also, using something like an ARIMA model
-would likely make more sense, but again, don't focus too much on the "insides"
-of the code.
+but again, this is a toy example.
 
 The Python script contains several little functions to make the code as modular
 as possible.
@@ -378,11 +377,12 @@ def format_results(y_test: pd.Series, predictions) -> pd.DataFrame:
 def save_arrow(df: pd.DataFrame, path: str):
     """Encoder function to save a pandas DataFrame to an Arrow file."""
     feather.write_feather(df, path)
-
 ```
 
 Just as for the Julia script, I write a wrapper around `feather.write_feather()`
-to serialize the data into an Arrow file and pass it finally to R.
+to serialize the data into an Arrow file and pass it finally to R. Just as before,
+it is possible to start a Python interpreter as defined in the `default.nix` file
+and use to test and debug.
 
 ### 4. The Visualization (`functions.R`)
 
@@ -489,7 +489,6 @@ library(rixpress)
 
 # Define the full pipeline as a list of derivations and pipe it to rxp_populate()
 # to generate the Nix build instructions and execute the pipeline.
-
 list(
   # STEP 0: Define RBC Model Parameters as Derivations
   # This makes the parameters an explicit part of the pipeline.
@@ -510,19 +509,63 @@ list(
     encoder = "arrow_write" # The function to use for saving the output
   ),
 
-  # STEP 2: Python - Train an XGBoost model on the simulated data.
-  # This derivation depends on the output of the Julia step.
+ # STEP 2.1: Python - Prepare features (lagging data)
+  rxp_py(
+    name = processed_data,
+    expr = "prepare_features(simulated_rbc_data)",
+    user_functions = "functions/functions.py",
+    # Decode the Arrow file from Julia into a pandas DataFrame
+    decoder = "feather.read_feather"
+    # Note: No encoder needed here. {rixpress} will use pickle by default
+    # to pass the DataFrame between Python steps.
+  ),
+
+  # STEP 2.2: Python - Split data into training and testing sets
+  rxp_py(
+    name = X_train,
+    expr = "get_X_train(processed_data)",
+    user_functions = "functions/functions.py"
+  ),
+
+  rxp_py(
+    name = y_train,
+    expr = "get_y_train(processed_data)",
+    user_functions = "functions/functions.py"
+  ),
+
+  rxp_py(
+    name = X_test,
+    expr = "get_X_test(processed_data)",
+    user_functions = "functions/functions.py"
+  ),
+
+  rxp_py(
+    name = y_test,
+    expr = "get_y_test(processed_data)",
+    user_functions = "functions/functions.py"
+  ),
+
+  # STEP 2.3: Python - Train the model
+  rxp_py(
+    name = trained_model,
+    expr = "train_model(X_train, y_train)",
+    user_functions = "functions/functions.py"
+  ),
+
+  # STEP 2.4: Python - Make predictions
+  rxp_py(
+    name = model_predictions,
+    expr = "make_predictions(trained_model, X_test)",
+    user_functions = "functions/functions.py"
+  ),
+
+  # STEP 2.5: Python - Format final results for R
   rxp_py(
     name = predictions,
-    # The expression is now a clean function call. {rixpress} handles
-    # passing the `simulated_rbc_data` DataFrame as the argument.
-    expr = "train_and_predict_output(simulated_rbc_data)",
+    expr = "format_results(y_test, model_predictions)",
     user_functions = "functions/functions.py",
-    # The decoder is still needed to convert the .arrow file from Julia
-    # into the pandas DataFrame that our function expects.
-    decoder = "feather.read_feather",
-    # The encoder is still needed to take the DataFrame returned by our
-    # function and save it to a .arrow file for the next step.
+    # We need an encoder here to save the final DataFrame as an Arrow file
+    # so the R step can read it.
     encoder = "save_arrow"
   ),
 
@@ -533,19 +576,16 @@ list(
     expr = plot_predictions(predictions), # The function to call from functions.R
     user_functions = "functions/functions.R",
     # Specify how to load the upstream data (from Python) into R.
-    decoder = arrow::read_ipc_file
+    decoder = arrow::read_feather
   ),
 
-  # STEP 4: Quarto - Compile the final report, this is what you're
-  # currently reading.
+  # STEP 4: Quarto - Compile the final report.
   rxp_qmd(
     name = final_report,
     qmd_file = "readme.qmd"
   )
 ) |>
   rxp_populate(
-    # rxp_populate generates the Nix expression of the pipeline.
-    # I adjust the Python imports...
     py_imports = c(
       pandas = "import pandas as pd",
       pyarrow = "import pyarrow.feather as feather",
@@ -553,12 +593,24 @@ list(
       xgboost = "import xgboost as xgb"
     ),
     project_path = ".", # The root of our project
-    build = TRUE, # Set to TRUE to build the pipeline when sourcing this script.
-    verbose = 1 # Setting to '1' is useful for debugging.
+    build = TRUE, # Set to TRUE to execute the pipeline immediately
+    verbose = 0
   )
 
+# Plot DAG for CI
+rxp_dag_for_ci()
 
 ```
+
+To run the pipeline, start the environment by simply typing `nix-shell` in the terminal,
+which will use the environment as defined in the `default.nix` and run `source("gen-pipeline.R")`.
+If there are issues, setting the `verbose` argument of `rxp_populate()` to `1` is helpful
+to see the full error logs.
+
+In an interactive session, one can use `rxp_read()`, `rxp_load()` to read or load
+artifacts into the R session respectively and `rxp_trace()` to check the lineage of 
+an artifact. The pipeline could also be built from a Python session, using `ryxpress`,
+the Python port of `{rixpress}`.
 
 ## The Final Result
 

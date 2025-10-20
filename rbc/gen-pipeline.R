@@ -92,7 +92,7 @@ list(
     expr = plot_predictions(predictions), # The function to call from functions.R
     user_functions = "functions/functions.R",
     # Specify how to load the upstream data (from Python) into R.
-    decoder = arrow::read_ipc_file
+    decoder = arrow::read_feather
   ),
 
   # STEP 4: Quarto - Compile the final report.
