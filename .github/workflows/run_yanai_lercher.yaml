@@ -54,6 +54,14 @@ jobs:
         run: |
           nix-shell --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot _rixpress/dag.dot"
 
+      - name: Import cached outputs if available
+        run: |
+          if [ -f "../outputs/yanai_lercher_2020/pipeline_outputs.nar" ]; then
+            nix-shell --quiet --run "Rscript -e 'rixpress::rxp_import_artifacts(archive_file = \"../outputs/yanai_lercher_2020/pipeline_outputs.nar\")'"
+          else
+            echo "No cached outputs found, will build from scratch"
+          fi
+
       - name: Build pipeline
         run: |
           nix-shell --quiet --run "Rscript -e 'rixpress::rxp_make(verbose = 1)'"
@@ -68,7 +76,8 @@ jobs:
 
       - name: Export outputs to avoid rebuild
         run: |
-          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_export_artifacts(archive_file = \"pipeline_outputs.nar\")'"
+          mkdir -p ../outputs/yanai_lercher_2020
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_export_artifacts(archive_file = \"../outputs/yanai_lercher_2020/pipeline_outputs.nar\")'"
 
       - name: Set git config
         run: |
@@ -100,11 +109,12 @@ jobs:
       - name: Garbage collect using Python
         run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = False, force = True)'"
 
-      - name: Push docs
+      - name: Push docs and cached outputs
         run: |
           cd ..
           git pull --rebase --autostash origin master
           git add docs/
+          git add outputs/yanai_lercher_2020/pipeline_outputs.nar
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
