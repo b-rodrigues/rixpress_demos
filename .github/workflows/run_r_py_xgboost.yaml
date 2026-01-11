@@ -40,14 +40,14 @@ jobs:
 
       - name: Build dev env
         run: |
-          nix-shell --expr "$(curl -sl https://raw.githubusercontent.com/ropensci/rix/main/inst/extdata/default.nix)" --run "R -e 'source(\"gen-env.R\")'"
+          nix-shell --expr "$(curl -sl https://raw.githubusercontent.com/ropensci/rix/main/inst/extdata/default.nix)" --run "Rscript 'gen-env.R'"
 
       - name: Checkout default.nix
         run: cat default.nix
 
       - name: Generate and check out pipeline
         run: |
-          nix-shell --quiet --run "Rscript 'source(\"gen-pipeline.R\")'"
+          nix-shell --quiet --run "Rscript 'gen-pipeline.R'"
           cat pipeline.nix
 
       - name: Check DAG
