@@ -40,14 +40,14 @@ jobs:
 
       - name: Build dev env
         run: |
-          nix-shell --expr "$(curl -sl https://raw.githubusercontent.com/ropensci/rix/main/inst/extdata/default.nix)" --run "Rscript -e 'source(\"gen-env.R\")'"
+          nix-shell -xpr "$(curl -sl https://raw.githubusercontent.com/ropensci/rix/main/inst/extdata/default.nix)" --run "Rscript  'source(\"gennv.R\")'"
 
       - name: Checkout default.nix
         run: cat default.nix
 
       - name: Generate and check out pipeline
         run: |
-          nix-shell --quiet --run "Rscript -e 'source(\"gen-pipeline.R\")'"
+          nix-shell --quiet --run "Rscript 'source(\"gen-pipeline.R\")'"
           cat pipeline.nix
 
       - name: Check DAG
@@ -56,12 +56,12 @@ jobs:
 
       - name: Build pipeline
         run: |
-          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_make()'"
+          nix-shell --quiet --run "Rscript 'rixpress::rxp_make()'"
 
       - name: Inspect built derivations
         run: |
-          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
+          nix-shell --quiet --run "Rscript 'rixpress::rxp_inspect()'"
 
       - name: Show mtcars_mpg
         run: |
-          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_read(\"confusion_matrix\")'"
+          nix-shell --quiet --run "Rscript 'rixpress::rxp_read(\"confusion_matrix\")'"
