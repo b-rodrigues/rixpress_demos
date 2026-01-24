@@ -1,0 +1,106 @@
+name: rel_path demo
+
+on:
+  repository_dispatch:
+    types: [trigger-demo]
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+permissions: write-all
+
+jobs:
+  rel-path:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create this folder to silence warning
+        run: mkdir -p ~/.nix-defexpr/channels
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=https://github.com/rstats-on-nix/nixpkgs/archive/r-daily.tar.gz
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: rstats-on-nix
+
+      # Step 1: Generate the Nix environment at project root (rel_path/)
+      - name: Build dev env at project root
+        working-directory: ./rel_path
+        run: |
+          nix-shell --expr "$(curl -sl https://raw.githubusercontent.com/ropensci/rix/main/inst/extdata/default.nix)" --run "Rscript -e 'source(\"gen-env.R\")'"
+
+      - name: Checkout default.nix (at root)
+        working-directory: ./rel_path
+        run: cat default.nix
+
+      # Step 2: Generate the pipeline from the subdirectory using relative path
+      - name: Generate pipeline from subdirectory
+        working-directory: ./rel_path/subdir/analysis
+        run: |
+          echo "Generating pipeline from subdirectory using relative path '../../default.nix'"
+          nix-shell ../../default.nix --quiet --run "Rscript -e 'source(\"gen-pipeline.R\")'"
+
+      - name: Verify correct variable names in pipeline.nix
+        working-directory: ./rel_path/subdir/analysis
+        run: |
+          echo "Checking that relative path was handled correctly..."
+          echo "Variable names should be 'defaultBuildInputs', NOT '______defaultBuildInputs'"
+          
+          if grep -q "______default" pipeline.nix; then
+            echo "ERROR: Found invalid variable names with leading underscores!"
+            grep "______default" pipeline.nix
+            exit 1
+          fi
+          
+          if grep -q "defaultBuildInputs" pipeline.nix; then
+            echo "SUCCESS: Found correct 'defaultBuildInputs' variable"
+          else
+            echo "ERROR: Expected 'defaultBuildInputs' not found"
+            exit 1
+          fi
+          
+          echo "Pipeline content:"
+          cat pipeline.nix
+
+      - name: Check DAG
+        working-directory: ./rel_path/subdir/analysis
+        run: |
+          nix-shell ../../default.nix --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot _rixpress/dag.dot"
+
+      - name: Build pipeline
+        working-directory: ./rel_path/subdir/analysis
+        run: |
+          nix-shell ../../default.nix --quiet --run "Rscript -e 'rixpress::rxp_make()'"
+
+      - name: Inspect built derivations
+        working-directory: ./rel_path/subdir/analysis
+        run: |
+          nix-shell ../../default.nix --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
+
+      - name: Load and verify outputs
+        working-directory: ./rel_path/subdir/analysis
+        run: |
+          nix-shell ../../default.nix --quiet --run "Rscript -e '
+            library(rixpress)
+            
+            # Load the built derivations
+            mtcars_am <- rxp_read(\"mtcars_am\")
+            mtcars_head <- rxp_read(\"mtcars_head\")
+            mtcars_summary <- rxp_read(\"mtcars_summary\")
+            
+            cat(\"mtcars_am has\", nrow(mtcars_am), \"rows\\n\")
+            cat(\"mtcars_head has\", nrow(mtcars_head), \"rows\\n\")
+            cat(\"mtcars_summary:\\n\")
+            print(mtcars_summary)
+          '"
