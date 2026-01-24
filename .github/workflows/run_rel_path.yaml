@@ -76,7 +76,7 @@ jobs:
       - name: Check DAG
         working-directory: ./rel_path/subdir/analysis
         run: |
-          nix-shell ../../default.nix --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot _rixpress/dag.dot"
+          nix-shell --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot _rixpress/dag.dot"
 
       - name: Build pipeline
         working-directory: ./rel_path/subdir/analysis
