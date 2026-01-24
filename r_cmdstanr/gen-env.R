@@ -1,7 +1,7 @@
 library(rix)
 
 rix(
-  date = "2025-04-29",
+  date = "2026-01-19",
   r_pkgs = c("readr", "dplyr", "ggplot2", "brms", "quarto"),
   system_pkgs = "cmdstan",
   py_conf = list(

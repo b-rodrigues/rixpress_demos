@@ -8,7 +8,7 @@ library(rix)
 rix(
   # Pin the environment to a specific date to ensure that all package
   # versions are resolved as they were on this day.
-  date = "2025-10-14",
+  date = "2026-01-19",
 
   # 1. R Packages
   # We need packages for plotting, data manipulation, and reading arrow files.

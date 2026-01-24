@@ -2,7 +2,7 @@ library(rix)
 
 # Environment to run some derivations
 rix(
-  date = "2025-08-25",
+  date = "2026-01-19",
   git_pkgs = list(
     list(
       package_name = "rix",
@@ -28,7 +28,7 @@ rix(
 file.rename("default.nix", "default2.nix")
 
 rix(
-  date = "2025-08-25",
+  date = "2026-01-19",
   r_pkgs = "readr",
   git_pkgs = list(
     list(

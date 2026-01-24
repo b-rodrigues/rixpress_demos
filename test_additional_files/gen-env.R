@@ -1,7 +1,7 @@
 library(rix)
 
 rix(
-  date = "2025-05-05",
+  date = "2026-01-19",
   r_pkgs = "dplyr",
   git_pkgs = list(
     list(

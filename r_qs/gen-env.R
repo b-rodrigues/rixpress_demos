@@ -2,7 +2,7 @@ library(rix)
 
 # Define execution environment
 rix(
-  date = "2025-04-11",
+  date = "2026-01-19",
   r_pkgs = c("dplyr", "igraph", "qs"),
   py_conf = list(
     py_version = "3.13",
