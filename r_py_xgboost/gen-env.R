@@ -1,7 +1,7 @@
 library(rix)
 
 rix(
-  date = "2026-01-19",
+  date = "2025-04-29",
   r_pkgs = c(
     "dplyr",
     "ggplot2",
@@ -26,10 +26,7 @@ rix(
       "numpy",
       "pandas",
       "scikit-learn",
-      "xgboost",
-      "ryxpress",
-      "biocframe",
-      "rds2py"
+      "xgboost"
     )
   ),
   ide = "none",

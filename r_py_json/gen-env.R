@@ -1,7 +1,7 @@
 library(rix)
 
 rix(
-  date = "2026-01-19",
+  date = "2025-04-14",
   r_pkgs = "dplyr",
   git_pkgs = list(
     list(
@@ -17,7 +17,7 @@ rix(
   ),
   py_conf = list(
     py_version = "3.12",
-    py_pkgs = c("polars", "ryxpress", "biocframe", "rds2py", "pandas")
+    py_pkgs = "polars"
   ),
   ide = "none",
   project_path = ".",

@@ -2,7 +2,7 @@ library(rix)
 
 # Environment to run some derivations
 rix(
-  date = "2026-01-19",
+  date = "2025-08-25",
   git_pkgs = list(
     list(
       package_name = "rix",
@@ -16,10 +16,6 @@ rix(
     )
   ),
   r_pkgs = c("dplyr", "qs"),
-  py_conf = list(
-    py_version = "3.13",
-    py_pkgs = c("ryxpress", "biocframe", "rds2py", "pandas")
-  ),
   ide = "none",
   project_path = ".",
   overwrite = TRUE
@@ -28,7 +24,7 @@ rix(
 file.rename("default.nix", "default2.nix")
 
 rix(
-  date = "2026-01-19",
+  date = "2025-08-25",
   r_pkgs = "readr",
   git_pkgs = list(
     list(

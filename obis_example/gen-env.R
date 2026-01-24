@@ -1,7 +1,7 @@
 library(rix)
 
 rix(
-  date = "2026-01-19",
+  date = "2025-03-31",
   r_pkgs = c("robis", "ggplot2", "dplyr", "igraph", "reticulate", "quarto"),
   git_pkgs = list(
     list(
@@ -22,7 +22,7 @@ rix(
   ),
   py_conf = list(
     py_version = "3.12",
-    py_pkgs = c("geopandas", "fiona", "pandas", "folium", "ryxpress", "biocframe", "rds2py")
+    py_pkgs = c("geopandas", "fiona", "pandas", "folium")
   ),
   ide = "none",
   project_path = ".",

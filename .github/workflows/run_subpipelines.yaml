@@ -117,18 +117,3 @@ jobs:
             cat(\"\\n  model_coefs:\\n\")
             print(coefs)
           '"
-
-      - name: Build pipeline using Python
-        run: nix-shell --run 'python -c "from ryxpress import rxp_make; rxp_make()"'
-
-      - name: Inspect built derivations using Python
-        run: nix-shell --run 'python -c "from ryxpress import rxp_inspect; a = rxp_inspect(); print(a)"'
-
-      - name: View lineage using Python
-        run: nix-shell --run 'python -c "from ryxpress import rxp_trace; rxp_trace(\"model_coefs\")"'
-
-      - name: Load derivation using Python
-        run: nix-shell --run "python -c 'from rds2py import read_rds; from ryxpress import rxp_read; mpg_by_cyl = rxp_read(\"mpg_by_cyl\"); print(mpg_by_cyl.to_pandas())'"
-
-      - name: Garbage collect using Python
-        run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = False, force = True)'"

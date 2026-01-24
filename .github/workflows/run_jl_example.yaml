@@ -97,7 +97,7 @@ jobs:
         run: nix-shell --run "python -c 'from ryxpress import rxp_copy; rxp_copy(\"julia_doc\")'"
 
       - name: Garbage collect using Python
-        run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = False, force = True)'"
+        run: nix-shell --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = False, ask = False)'"
 
       - name: Push docs
         run: |
