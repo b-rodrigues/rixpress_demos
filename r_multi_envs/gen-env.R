@@ -52,6 +52,10 @@ file.rename("default.nix", "quarto-env.nix")
 rix(
   date = "2025-03-31",
   r_pkgs = c("igraph"),
+  py_conf = list(
+    py_version = "3.13",
+    py_pkgs = c("ryxpress", "biocframe", "rds2py", "pandas")
+  ),
   git_pkgs = list(
     list(
       package_name = "rix",

@@ -18,7 +18,7 @@ rix(
   ),
   py_conf = list(
     py_version = "3.12",
-    py_pkgs = "polars"
+    py_pkgs = c("polars", "ryxpress", "biocframe", "rds2py", "pandas")
   ),
   ide = "none",
   project_path = ".",

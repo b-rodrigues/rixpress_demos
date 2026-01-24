@@ -26,7 +26,10 @@ rix(
       "numpy",
       "pandas",
       "scikit-learn",
-      "xgboost"
+      "xgboost",
+      "ryxpress",
+      "biocframe",
+      "rds2py"
     )
   ),
   ide = "none",

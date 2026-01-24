@@ -4,6 +4,10 @@ library(rix)
 rix(
   date = "2025-04-11",
   r_pkgs = c("dplyr", "igraph", "qs"),
+  py_conf = list(
+    py_version = "3.13",
+    py_pkgs = c("ryxpress", "biocframe", "rds2py", "pandas")
+  ),
   git_pkgs = list(
     package_name = "rixpress",
     repo_url = "https://github.com/ropensci/rixpress",

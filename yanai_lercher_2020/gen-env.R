@@ -17,7 +17,7 @@ rix(
   ),
   py_conf = list(
     py_version = "3.13",
-    py_pkgs = c("ryxpress", "numpy", "pillow")
+    py_pkgs = c("ryxpress", "numpy", "pillow", "biocframe", "rds2py", "pandas")
   ),
   ide = "none",
   project_path = ".",

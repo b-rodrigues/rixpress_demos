@@ -16,6 +16,10 @@ rix(
     )
   ),
   r_pkgs = c("dplyr", "qs"),
+  py_conf = list(
+    py_version = "3.13",
+    py_pkgs = c("ryxpress", "biocframe", "rds2py", "pandas")
+  ),
   ide = "none",
   project_path = ".",
   overwrite = TRUE

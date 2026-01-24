@@ -104,3 +104,23 @@ jobs:
             cat(\"mtcars_summary:\\n\")
             print(mtcars_summary)
           '"
+
+      - name: Build pipeline using Python
+        working-directory: ./rel_path/subdir/analysis
+        run: nix-shell ../../default.nix --run 'python -c "from ryxpress import rxp_make; rxp_make()"'
+
+      - name: Inspect built derivations using Python
+        working-directory: ./rel_path/subdir/analysis
+        run: nix-shell ../../default.nix --run 'python -c "from ryxpress import rxp_inspect; a = rxp_inspect(); print(a)"'
+
+      - name: View lineage using Python
+        working-directory: ./rel_path/subdir/analysis
+        run: nix-shell ../../default.nix --run 'python -c "from ryxpress import rxp_trace; rxp_trace(\"mtcars_summary\")"'
+
+      - name: Load derivation using Python
+        working-directory: ./rel_path/subdir/analysis
+        run: nix-shell ../../default.nix --run "python -c 'from rds2py import read_rds; from ryxpress import rxp_read; mtcars_summary = rxp_read(\"mtcars_summary\"); print(mtcars_summary.to_pandas())'"
+
+      - name: Garbage collect using Python
+        working-directory: ./rel_path/subdir/analysis
+        run: nix-shell ../../default.nix --run "python -c 'from ryxpress import rxp_gc; rxp_gc(keep_since = \"2050-12-31\", dry_run = False, force = True)'"

@@ -22,7 +22,7 @@ rix(
   ),
   py_conf = list(
     py_version = "3.12",
-    py_pkgs = c("geopandas", "fiona", "pandas", "folium")
+    py_pkgs = c("geopandas", "fiona", "pandas", "folium", "ryxpress", "biocframe", "rds2py")
   ),
   ide = "none",
   project_path = ".",
