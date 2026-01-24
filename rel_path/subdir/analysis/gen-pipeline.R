@@ -30,6 +30,9 @@ list(
 ) |>
   rxp_populate(project_path = ".", build = FALSE)
 
+# Generate dag.dot for CI visualization
+rxp_dag_for_ci()
+
 # Print success message
 cat("\nPipeline generated successfully!\n")
 cat("The relative path '../../default.nix' was correctly handled.\n")
