@@ -6,32 +6,21 @@
 library(rixpress)
 
 # =============================================================================
-# Source Sub-Pipelines
-# =============================================================================
-
-# Each sub-pipeline is defined in a separate file and returns a list of
-# derivations. Using source()$value extracts the returned list.
-
-data_prep_derivs <- source("pipelines/01_data_prep.R")$value
-analysis_derivs <- source("pipelines/02_analysis.R")$value
-
-# =============================================================================
 # Create Named Pipelines with Colors
 # =============================================================================
 
-# Wrap each list of derivations in rxp_pipeline() to:
-# 1. Give it a name that appears in the DAG legend
-# 2. Assign a color for visual distinction
+# Pass the path to the sub-pipeline scripts directly to rxp_pipeline()
+# This avoids needing to manually source() the files.
 
 pipe_data_prep <- rxp_pipeline(
   name = "Data Preparation",
-  derivs = data_prep_derivs,
+  path = "pipelines/01_data_prep.R",
   color = "#E69F00"  # Orange
 )
 
 pipe_analysis <- rxp_pipeline(
   name = "Statistical Analysis",
-  derivs = analysis_derivs,
+  path = "pipelines/02_analysis.R",
   color = "#56B4E9"  # Blue
 )
 
