@@ -1,0 +1,119 @@
+name: subpipelines demo
+
+on:
+  repository_dispatch:
+    types: [trigger-demo]
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+permissions: write-all
+
+jobs:
+  subpipelines:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    defaults:
+      run:
+        working-directory: ./subpipelines
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create this folder to silence warning
+        run: mkdir -p ~/.nix-defexpr/channels
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=https://github.com/rstats-on-nix/nixpkgs/archive/r-daily.tar.gz
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: rstats-on-nix
+
+      - name: Build dev env
+        run: |
+          nix-shell --expr "$(curl -sl https://raw.githubusercontent.com/ropensci/rix/main/inst/extdata/default.nix)" --run "Rscript -e 'source(\"gen-env.R\")'"
+
+      - name: Checkout default.nix
+        run: cat default.nix
+
+      - name: Generate pipeline with sub-pipelines
+        run: |
+          echo "Generating pipeline using rxp_pipeline() for sub-pipelines..."
+          nix-shell --quiet --run "Rscript -e 'source(\"gen-pipeline.R\")'"
+
+      - name: Verify pipeline metadata in dag.json
+        run: |
+          echo "Checking that pipeline metadata is present in dag.json..."
+          
+          if grep -q "pipeline_group" _rixpress/dag.json; then
+            echo "SUCCESS: Found 'pipeline_group' field in dag.json"
+          else
+            echo "ERROR: 'pipeline_group' not found in dag.json"
+            exit 1
+          fi
+          
+          if grep -q "Data Preparation" _rixpress/dag.json; then
+            echo "SUCCESS: Found 'Data Preparation' pipeline group"
+          else
+            echo "ERROR: 'Data Preparation' pipeline not found"
+            exit 1
+          fi
+          
+          if grep -q "Statistical Analysis" _rixpress/dag.json; then
+            echo "SUCCESS: Found 'Statistical Analysis' pipeline group"
+          else
+            echo "ERROR: 'Statistical Analysis' pipeline not found"
+            exit 1
+          fi
+          
+          echo ""
+          echo "dag.json content:"
+          cat _rixpress/dag.json
+
+      - name: Check DAG
+        run: |
+          nix-shell --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot _rixpress/dag.dot"
+
+      - name: Build pipeline
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_make()'"
+
+      - name: Inspect built derivations
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
+
+      - name: Load and verify outputs
+        run: |
+          nix-shell --quiet --run "Rscript -e '
+            library(rixpress)
+            
+            # Load outputs from Data Preparation pipeline
+            raw <- rxp_read(\"raw_mtcars\")
+            clean <- rxp_read(\"clean_mtcars\")
+            selected <- rxp_read(\"selected_mtcars\")
+            
+            cat(\"Data Preparation outputs:\\n\")
+            cat(\"  raw_mtcars:\", nrow(raw), \"rows\\n\")
+            cat(\"  clean_mtcars:\", nrow(clean), \"rows\\n\")
+            cat(\"  selected_mtcars:\", nrow(selected), \"rows,\", ncol(selected), \"cols\\n\")
+            
+            # Load outputs from Analysis pipeline
+            stats <- rxp_read(\"summary_stats\")
+            by_cyl <- rxp_read(\"mpg_by_cyl\")
+            coefs <- rxp_read(\"model_coefs\")
+            
+            cat(\"\\nStatistical Analysis outputs:\\n\")
+            cat(\"  mpg_by_cyl:\\n\")
+            print(by_cyl)
+            cat(\"\\n  model_coefs:\\n\")
+            print(coefs)
+          '"
