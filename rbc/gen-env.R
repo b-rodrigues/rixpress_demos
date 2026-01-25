@@ -18,11 +18,15 @@ rix(
     "ggdag",
     "dplyr",
     "arrow",
-    "rix",
-    "rixpress",
     "quarto"
   ),
 
+  git_pkgs = list(
+    package_name = "rixpress",
+    repo_url = "https://github.com/ropensci/rixpress",
+    commit = "HEAD"
+  ),
+  
   # 2. Julia Configuration
   # We specify the Julia version and the list of packages needed
   # for our manual RBC model simulation.
