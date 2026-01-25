@@ -17,7 +17,14 @@ rix(
   ),
   py_conf = list(
     py_version = "3.12",
-    py_pkgs = c("pandas", "polars", "pyarrow")
+    py_pkgs = c("pandas", "polars", "pyarrow"),
+    git_pkgs = list(
+      list(
+        package_name = "ryxpress",
+        repo_url = "https://github.com/b-rodrigues/ryxpress",
+        commit = "HEAD"
+      )
+    )
   ),
   ide = "none",
   project_path = ".",

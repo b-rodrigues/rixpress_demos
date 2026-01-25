@@ -45,8 +45,14 @@ rix(
       "pandas",
       "scikit-learn",
       "xgboost",
-      "pyarrow",
-      "ryxpress"
+      "pyarrow"
+    ),
+    git_pkgs = list(
+      list(
+        package_name = "ryxpress",
+        repo_url = "https://github.com/b-rodrigues/ryxpress",
+        commit = "HEAD"
+      )
     )
   ),
 

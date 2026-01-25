@@ -17,7 +17,14 @@ rix(
   ),
   py_conf = list(
     py_version = "3.13",
-    py_pkgs = c("ryxpress", "numpy", "pillow")
+    py_pkgs = c("numpy", "pillow"),
+    git_pkgs = list(
+      list(
+        package_name = "ryxpress",
+        repo_url = "https://github.com/b-rodrigues/ryxpress",
+        commit = "HEAD"
+      )
+    )
   ),
   ide = "none",
   project_path = ".",
