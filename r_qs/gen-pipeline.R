@@ -11,13 +11,13 @@ list(
   rxp_r(
     name = filtered_mtcars,
     expr = dplyr::filter(mtcars, am == 1),
-    encoder = qs2::qsave
+    encoder = qs2::qs_save
   ),
 
   rxp_r(
     name = mtcars_mpg,
     expr = dplyr::select(filtered_mtcars, mpg),
-    decoder = qs2::qread
+    decoder = qs2::qs_read
   ),
 
   rxp_r(
