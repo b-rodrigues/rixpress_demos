@@ -52,7 +52,7 @@ list(
     additional_files = c("my_doc/content.qmd", "my_doc/images")
   )
 ) |>
-  rxp_populate(project_path = ".", build = TRUE)
+  rxp_populate(project_path = ".", build = TRUE, verbose = 2)
 
 # Plot DAG for CI
 rxp_dag_for_ci()
