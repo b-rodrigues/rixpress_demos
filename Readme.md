@@ -39,3 +39,4 @@ and can be viewed [here](https://b-rodrigues.github.io/rixpress_demos/).
   compute the confusion matrix using `{yardstick}`.
 
 Each example contains a readme with more details.
+
