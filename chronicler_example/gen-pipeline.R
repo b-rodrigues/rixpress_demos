@@ -44,7 +44,7 @@ list(
   # When upstream is Nothing, the computation propagates Nothing
   rxp_r(
     name = downstream_of_nothing,
-    expr = sqrt_of_negative |> bind_record(\(x) r_mean(x)),
+    expr = sqrt_of_negative |> bind_record(r_mean),
     user_functions = "functions.R"
   )
 ) |>
