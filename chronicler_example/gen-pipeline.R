@@ -16,18 +16,18 @@ list(
     user_functions = "functions.R"
   ),
 
-  # Step 3: Select using chronicler - chains from previous chronicle
+  # Step 3: Pull a column using chronicler - chains from previous chronicle
   # Uses bind_record to chain chronicle operations
   rxp_r(
     name = mtcars_mpg,
-    expr = filtered_mtcars |> bind_record(r_select, mpg),
+    expr = filtered_mtcars |> bind_record(r_pull, mpg),
     user_functions = "functions.R"
   ),
 
   # Step 4: Compute mean of mpg - should SUCCEED
   rxp_r(
     name = mean_mpg,
-    expr = mtcars_mpg |> bind_record(get_mean_mpg),
+    expr = mtcars_mpg |> bind_record(r_mean),
     user_functions = "functions.R"
   ),
 
