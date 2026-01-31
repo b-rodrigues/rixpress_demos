@@ -72,3 +72,7 @@ list(
 #
 # Summary: 3 success, 0 with warnings, 2 nothing
 # Warning: 2 derivation(s) contain Nothing values!
+
+
+# Plot DAG for CI
+rxp_dag_for_ci()
