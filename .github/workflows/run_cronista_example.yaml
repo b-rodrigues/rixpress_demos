@@ -1,0 +1,134 @@
+name: cronista demo (Python)
+
+on:
+  repository_dispatch:
+    types: [trigger-demo]
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+permissions: write-all
+
+jobs:
+  cronista_python:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+
+    defaults:
+      run:
+        working-directory: ./cronista_example
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create this folder to silence warning
+        run: mkdir -p ~/.nix-defexpr/channels
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          nix_path: nixpkgs=https://github.com/rstats-on-nix/nixpkgs/archive/r-daily.tar.gz
+
+      - name: Setup Cachix
+        uses: cachix/cachix-action@v15
+        with:
+          name: rstats-on-nix
+
+      - name: Build dev env
+        run: |
+          nix-shell --expr "$(curl -sl https://raw.githubusercontent.com/ropensci/rix/main/inst/extdata/default.nix)" --run "Rscript -e 'source(\"gen-env.R\")'"
+
+      - name: Checkout default.nix
+        run: cat default.nix
+
+      - name: Generate pipeline
+        run: |
+          echo "Generating pipeline with cronista-decorated Python functions..."
+          nix-shell --quiet --run "Rscript -e 'source(\"gen-pipeline.R\")'"
+
+      - name: Check DAG
+        run: |
+          nix-shell --quiet -p haskellPackages.stacked-dag --run "stacked-dag dot _rixpress/dag.dot"
+
+      - name: Build pipeline
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_make()'"
+
+      - name: Inspect built derivations
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_inspect()'"
+
+      - name: Check chronicle status with Python (ryxpress)
+        run: |
+          echo "Checking for Nothing values in pipeline outputs..."
+          nix-shell --quiet --run "python -c '
+from ryxpress import rxp_check_chronicles
+result = rxp_check_chronicles()
+if result:
+    n_nothing = sum(1 for r in result if r[\"chronicle_state\"] == \"nothing\")
+    if n_nothing > 0:
+        print(f\"Found {n_nothing} derivation(s) with Nothing values as expected!\")
+'"
+
+      - name: Read successful chronicle with Python
+        run: |
+          nix-shell --quiet --run "python -c '
+from ryxpress import rxp_read
+from cronista import unveil, read_log
+
+# Read a successful result
+result = rxp_read(\"sqrt_result\")
+print(\"sqrt_result:\")
+print(f\"  Value: {unveil(result, 'value')}\")
+print(f\"  Is OK: {result.is_ok()}\")
+
+# Read stats result
+stats = rxp_read(\"stats_result\")
+print(\"stats_result:\")
+print(f\"  Value: {unveil(stats, 'value')}\")
+'"
+
+      - name: Read Nothing chronicle with Python (expect warning)
+        run: |
+          nix-shell --quiet --run "python -c '
+from ryxpress import rxp_read
+from cronista import read_log
+import warnings
+warnings.filterwarnings(\"always\")
+
+# This should produce a warning about Nothing value
+result = rxp_read(\"div_by_zero\")
+print(\"div_by_zero:\")
+print(f\"  Is OK: {result.is_ok()}\")
+print(\"Log:\")
+for line in read_log(result, style=\"pretty\"):
+    print(f\"  {line}\")
+'"
+
+      - name: Verify downstream Nothing propagation
+        run: |
+          nix-shell --quiet --run "python -c '
+from ryxpress import rxp_read
+from cronista import read_log
+
+result = rxp_read(\"downstream_of_nothing\")
+print(\"downstream_of_nothing:\")
+print(f\"  Is OK: {result.is_ok()}\")
+print(\"Log shows short-circuit:\")
+for line in read_log(result, style=\"pretty\"):
+    print(f\"  {line}\")
+'"
+
+      - name: Build pipeline using Python
+        run: nix-shell --run 'python -c "from ryxpress import rxp_make; rxp_make()"'
+
+      - name: Inspect built derivations using Python
+        run: nix-shell --run 'python -c "from ryxpress import rxp_inspect; a = rxp_inspect(); print(a)"'
+
+      - name: Garbage collect
+        run: |
+          nix-shell --quiet --run "Rscript -e 'rixpress::rxp_gc(keep_since = \"2050-12-31\", dry_run = FALSE, ask = FALSE)'"
