@@ -65,63 +65,23 @@ jobs:
       - name: Check chronicle status with Python (ryxpress)
         run: |
           echo "Checking for Nothing values in pipeline outputs..."
-          nix-shell --quiet --run "python -c '
-from ryxpress import rxp_check_chronicles
-result = rxp_check_chronicles()
-if result:
-    n_nothing = sum(1 for r in result if r[\"chronicle_state\"] == \"nothing\")
-    if n_nothing > 0:
-        print(f\"Found {n_nothing} derivation(s) with Nothing values as expected!\")
-'"
+          nix-shell --quiet --run "python -c 'from ryxpress import rxp_check_chronicles; rxp_check_chronicles()'"
 
       - name: Read successful chronicle with Python
         run: |
-          nix-shell --quiet --run "python -c '
-from ryxpress import rxp_read
-from cronista import unveil, read_log
+          nix-shell --quiet --run "python -c 'from ryxpress import rxp_read; from cronista import unveil; r = rxp_read(\"sqrt_result\"); print(\"sqrt_result:\", unveil(r, \"value\"), \"is_ok:\", r.is_ok())'"
 
-# Read a successful result
-result = rxp_read(\"sqrt_result\")
-print(\"sqrt_result:\")
-print(f\"  Value: {unveil(result, 'value')}\")
-print(f\"  Is OK: {result.is_ok()}\")
-
-# Read stats result
-stats = rxp_read(\"stats_result\")
-print(\"stats_result:\")
-print(f\"  Value: {unveil(stats, 'value')}\")
-'"
+      - name: Read stats result with Python
+        run: |
+          nix-shell --quiet --run "python -c 'from ryxpress import rxp_read; from cronista import unveil; r = rxp_read(\"stats_result\"); print(\"stats_result:\", unveil(r, \"value\"))'"
 
       - name: Read Nothing chronicle with Python (expect warning)
         run: |
-          nix-shell --quiet --run "python -c '
-from ryxpress import rxp_read
-from cronista import read_log
-import warnings
-warnings.filterwarnings(\"always\")
-
-# This should produce a warning about Nothing value
-result = rxp_read(\"div_by_zero\")
-print(\"div_by_zero:\")
-print(f\"  Is OK: {result.is_ok()}\")
-print(\"Log:\")
-for line in read_log(result, style=\"pretty\"):
-    print(f\"  {line}\")
-'"
+          nix-shell --quiet --run "python -c 'import warnings; warnings.filterwarnings(\"always\"); from ryxpress import rxp_read; r = rxp_read(\"div_by_zero\"); print(\"div_by_zero is_ok:\", r.is_ok())'"
 
       - name: Verify downstream Nothing propagation
         run: |
-          nix-shell --quiet --run "python -c '
-from ryxpress import rxp_read
-from cronista import read_log
-
-result = rxp_read(\"downstream_of_nothing\")
-print(\"downstream_of_nothing:\")
-print(f\"  Is OK: {result.is_ok()}\")
-print(\"Log shows short-circuit:\")
-for line in read_log(result, style=\"pretty\"):
-    print(f\"  {line}\")
-'"
+          nix-shell --quiet --run "python -c 'from ryxpress import rxp_read; r = rxp_read(\"downstream_of_nothing\"); print(\"downstream_of_nothing is_ok:\", r.is_ok())'"
 
       - name: Build pipeline using Python
         run: nix-shell --run 'python -c "from ryxpress import rxp_make; rxp_make()"'
