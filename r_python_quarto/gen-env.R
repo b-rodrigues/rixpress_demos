@@ -12,7 +12,7 @@ rix(
     list(
       package_name = "rixpress",
       repo_url = "https://github.com/ropensci/rixpress",
-      commit = "78d389207fe2a293b6a0553d74917d485c56c306"
+      commit = "bb57bf4e191d6ee07c62f5da4256575bb6d59ad2"
     )
   ),
   py_conf = list(
