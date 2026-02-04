@@ -17,7 +17,8 @@ list(
 
   rxp_py2r(
     name = mtcars_am,
-    expr = mtcars_pl_am
+    expr = mtcars_pl_am,
+    env_var = c(RETICULATE_AUTOCONFIGURE = "0")
   ),
 
   rxp_r(
@@ -28,7 +29,8 @@ list(
 
   rxp_r2py(
     name = mtcars_head_py,
-    expr = mtcars_head
+    expr = mtcars_head,
+    env_var = c(RETICULATE_AUTOCONFIGURE = "0")
   ),
 
   rxp_py(
@@ -38,7 +40,8 @@ list(
 
   rxp_py2r(
     name = mtcars_tail,
-    expr = mtcars_tail_py
+    expr = mtcars_tail_py,
+    env_var = c(RETICULATE_AUTOCONFIGURE = "0")
   ),
 
   rxp_r(
@@ -49,7 +52,8 @@ list(
   rxp_qmd(
     name = page,
     qmd_file = "my_doc/page.qmd",
-    additional_files = c("my_doc/content.qmd", "my_doc/images")
+    additional_files = c("my_doc/content.qmd", "my_doc/images"),
+    env_var = c(RETICULATE_AUTOCONFIGURE = "0")
   )
 ) |>
   rxp_populate(project_path = ".", build = TRUE, verbose = 2)
