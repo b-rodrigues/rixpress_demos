@@ -12,11 +12,11 @@ rix(
     list(
       package_name = "rixpress",
       repo_url = "https://github.com/ropensci/rixpress",
-      commit = "HEAD"
+      commit = "e06f98488c151ae1060b837cfdfe73ab75395800"
     )
   ),
   py_conf = list(
-    py_version = "3.13",
+    py_version = "3.12",
     py_pkgs = c("pandas", "polars", "pyarrow", "numpy"),
     git_pkgs = list(
       list(
